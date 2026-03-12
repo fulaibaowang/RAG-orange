@@ -7,4 +7,4 @@ accelerate
 tqdm
 numpy
 wandb
-
+matplotlib
