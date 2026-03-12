@@ -18,6 +18,7 @@ RST_DIRECTIVE_RE = re.compile(r"^\s*\.\.\s+(toctree|automodule|autoclass|autoatt
 RST_OPTION_RE = re.compile(r"^\s*:[a-zA-Z0-9_-]+:\s*")
 EMPH_RE = re.compile(r"(\*{1,2})([^*]+)\1")   # *text* or **text**
 UNDERLINE_RE = re.compile(r"^[-=]{3,}\s*$")   # ==== or ---- lines
+NUMBERED_LIST_RE = re.compile(r"^\d+[\.\)]\s")  # 1. ..., 2) ...
 
 ALLOWLIST_PATTERNS: List[str] = [
     "orange3-doc-visual-programming/source/widgets/**/*.md",
@@ -30,6 +31,7 @@ ALLOWLIST_PATTERNS: List[str] = [
     "orange3-bioinformatics/doc/widgets/*.md",
     "orange3-survival-analysis/doc/widgets/*.md",
     "orange3-single-cell/doc/widgets/*.md",
+    "orange3-timeseries/doc/widgets/*.md",
     "orange3/Orange/distance/distances.md",
     "orange3/doc/data-mining-library/source/tutorial/*.rst",
 ]
@@ -133,14 +135,15 @@ def tokenize(text: str) -> list[str]:
     return text.split()
 
 
+MIN_SECTION_TOKENS = 50      # minimum tokens when merging heading sections
+SMALL_CHUNK_TOKENS = 50      # minimum tokens for final chunks (merge smaller)
+
+
 def split_by_headings(cleaned_text: str) -> list[str]:
     """
-    Split a long document into sections by approximate headings.
-
-    We treat a line as a heading if:
-      - It starts with '#' (Markdown ATX), OR
-      - It is a non-empty line following a blank line, with no leading
-        list/numbering markers and reasonably short length.
+    Split a long document into sections by approximate headings,
+    then merge any tiny sections (< MIN_SECTION_TOKENS) into
+    the following section so we don't get degenerate 1-token chunks.
     """
     lines = cleaned_text.splitlines()
     if not lines:
@@ -155,26 +158,48 @@ def split_by_headings(cleaned_text: str) -> list[str]:
             heading_idxs.append(i)
             continue
         if i == 0 or not lines[i - 1].strip():
-            # no obvious list markers, short-ish line: treat as heading
-            if not stripped.startswith(("-", "*", "+")) and not stripped[:2].isdigit():
-                if len(stripped) <= 80:
-                    heading_idxs.append(i)
+            # skip obvious list items / numbered lines
+            if stripped.startswith(("-", "*", "+")):
+                continue
+            if NUMBERED_LIST_RE.match(stripped):
+                continue
+            if len(stripped) <= 80:
+                heading_idxs.append(i)
 
     if not heading_idxs:
         return [cleaned_text]
 
-    # ensure first line is a start
     if heading_idxs[0] != 0:
         heading_idxs.insert(0, 0)
 
-    sections: list[str] = []
+    raw_sections: list[str] = []
     for start, end in zip(heading_idxs, heading_idxs[1:] + [len(lines)]):
         chunk_lines = lines[start:end]
         section = "\n".join(chunk_lines).strip()
         if section:
-            sections.append(section)
+            raw_sections.append(section)
 
-    return sections or [cleaned_text]
+    if not raw_sections:
+        return [cleaned_text]
+
+    # merge small sections into the next one
+    merged: list[str] = []
+    buf = ""
+    for sec in raw_sections:
+        if buf:
+            buf = buf + "\n\n" + sec
+        else:
+            buf = sec
+        if len(tokenize(buf)) >= MIN_SECTION_TOKENS:
+            merged.append(buf)
+            buf = ""
+    if buf:
+        if merged:
+            merged[-1] = merged[-1] + "\n\n" + buf
+        else:
+            merged.append(buf)
+
+    return merged or [cleaned_text]
 
 
 def chunk_by_size(tokens: list[str], max_tokens: int, overlap: int) -> list[str]:
@@ -193,41 +218,64 @@ def chunk_by_size(tokens: list[str], max_tokens: int, overlap: int) -> list[str]
     return chunks
 
 
+def merge_small_chunks(chunks: list[str], min_tokens: int = SMALL_CHUNK_TOKENS) -> list[str]:
+    """
+    Merge chunks that are shorter than min_tokens into their preceding chunk.
+    """
+    merged: list[str] = []
+    for chunk in chunks:
+        toks = tokenize(chunk)
+        if not merged:
+            merged.append(chunk)
+            continue
+        if len(toks) < min_tokens:
+            merged[-1] = merged[-1] + "\n\n" + chunk
+        else:
+            merged.append(chunk)
+    return merged
+
+
 def split_into_chunks(cleaned_text: str) -> list[str]:
     """
-    Apply the requested chunking rules:
+    Apply the chunking rules:
 
-      - if chunk < 300 tokens: keep as-is (no overlap)
-      - if 300–600 tokens: split with 30 token overlap
-      - if >600 tokens: split by headings first, then apply above per section
+      - if whole section < 300 tokens: keep as a single chunk
+      - otherwise:
+          * split by headings
+          * within each heading section:
+              - if < 300 tokens: keep as-is
+              - if ≥ 300 tokens: 300-token windows with 30-token overlap
+          * finally, merge any chunks shorter than SMALL_CHUNK_TOKENS
+            into their predecessors.
     """
     top_tokens = tokenize(cleaned_text)
-    n_tokens = len(top_tokens)
-
-    if n_tokens == 0:
+    if not top_tokens:
         return []
 
-    # helper to chunk a single logical section
-    def chunk_section(text: str) -> list[str]:
-        toks = tokenize(text)
+    # If the whole section is short, keep it as a single chunk
+    if len(top_tokens) < 300:
+        return [cleaned_text]
+
+    # For longer sections, use headings + size rules
+    sections = split_by_headings(cleaned_text)
+
+    per_section_chunks: list[str] = []
+
+    for section in sections:
+        toks = tokenize(section)
         n = len(toks)
         if n == 0:
-            return []
+            continue
         if n < 300:
-            return [text]
-        if n <= 600:
-            return chunk_by_size(toks, max_tokens=300, overlap=30)
-        # if a subsection is still very long, fall back to 300-token windows
-        return chunk_by_size(toks, max_tokens=300, overlap=30)
+            per_section_chunks.append(section)
+        else:
+            per_section_chunks.extend(chunk_by_size(toks, max_tokens=300, overlap=30))
 
-    if n_tokens <= 600:
-        return chunk_section(cleaned_text)
+    if not per_section_chunks:
+        return []
 
-    # >600: split by headings, then chunk each subsection
-    all_chunks: list[str] = []
-    for section in split_by_headings(cleaned_text):
-        all_chunks.extend(chunk_section(section))
-    return all_chunks
+    # Global pass: merge small chunks into their predecessors
+    return merge_small_chunks(per_section_chunks, min_tokens=SMALL_CHUNK_TOKENS)
 
 
 def build_records(raw_text: str) -> list[dict]:
@@ -256,7 +304,7 @@ def build_records(raw_text: str) -> list[dict]:
                 {
                     "pmid": base_pmid,
                     "title": base_title,
-                    "abstract": chunks[0],
+                    "abstract": f"{base_title}\n\n{chunks[0]}",
                     "source_path": sec.path,
                 }
             )
@@ -268,7 +316,7 @@ def build_records(raw_text: str) -> list[dict]:
                     {
                         "pmid": pmid,
                         "title": title,
-                        "abstract": chunk_text,
+                        "abstract": f"{base_title}\n\n{chunk_text}",
                         "source_path": sec.path,
                     }
                 )

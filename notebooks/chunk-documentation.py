@@ -86,6 +86,7 @@ RST_DIRECTIVE_RE = re.compile(r"^\s*\.\.\s+(toctree|automodule|autoclass|autoatt
 RST_OPTION_RE = re.compile(r"^\s*:[a-zA-Z0-9_-]+:\s*")
 EMPH_RE = re.compile(r"(\*{1,2})([^*]+)\1")   # *text* or **text**
 UNDERLINE_RE = re.compile(r"^[-=]{3,}\s*$")   # ==== or ---- lines
+NUMBERED_LIST_RE = re.compile(r"^\d+[\.\)]\s")  # 1. ..., 2) ...
 
 
 def clean_text(text: str) -> str:
@@ -239,8 +240,8 @@ def tokenize(text: str) -> list[str]:
     return text.split()
 
 
-MIN_SECTION_TOKENS = 50
-
+MIN_SECTION_TOKENS = 50      # minimum tokens when merging heading sections
+SMALL_CHUNK_TOKENS = 50      # minimum tokens for final chunks (merge smaller)
 
 def split_by_headings(cleaned_text: str) -> list[str]:
     """
@@ -261,9 +262,13 @@ def split_by_headings(cleaned_text: str) -> list[str]:
             heading_idxs.append(i)
             continue
         if i == 0 or not lines[i - 1].strip():
-            if not stripped.startswith(("-", "*", "+")) and not stripped[:2].isdigit():
-                if len(stripped) <= 80:
-                    heading_idxs.append(i)
+            # skip obvious list items / numbered lines
+            if stripped.startswith(("-", "*", "+")):
+                continue
+            if NUMBERED_LIST_RE.match(stripped):
+                continue
+            if len(stripped) <= 80:
+                heading_idxs.append(i)
 
     if not heading_idxs:
         return [cleaned_text]
@@ -317,38 +322,63 @@ def chunk_by_size(tokens: list[str], max_tokens: int, overlap: int) -> list[str]
     return chunks
 
 
+def merge_small_chunks(chunks: list[str], min_tokens: int = SMALL_CHUNK_TOKENS) -> list[str]:
+    """
+    Merge chunks that are shorter than min_tokens into their preceding chunk.
+    """
+    merged: list[str] = []
+    for chunk in chunks:
+        toks = tokenize(chunk)
+        if not merged:
+            merged.append(chunk)
+            continue
+        if len(toks) < min_tokens:
+            merged[-1] = merged[-1] + "\n\n" + chunk
+        else:
+            merged.append(chunk)
+    return merged
+
+
 def split_into_chunks(cleaned_text: str) -> list[str]:
     """
-    Apply the same rules as the script:
+    Apply the chunking rules:
 
-      - if chunk < 300 tokens: keep as-is (no overlap)
-      - if 300–600 tokens: split with 30 token overlap
-      - if >600 tokens: split by headings first, then apply above per section
+      - always split by headings first (if any headings are found)
+      - for each heading section:
+          * if < 300 tokens: keep as-is (no overlap)
+          * if ≥ 300 tokens: use 300-token windows with 30-token overlap
+      - after all sections are chunked, merge any final chunks smaller
+        than SMALL_CHUNK_TOKENS into their neighbors.
     """
     top_tokens = tokenize(cleaned_text)
-    n_tokens = len(top_tokens)
-
-    if n_tokens == 0:
+    if not top_tokens:
         return []
 
-    def chunk_section(text: str) -> list[str]:
-        toks = tokenize(text)
+    # If the whole section is short, keep it as a single chunk
+    if len(top_tokens) < 300:
+        return [cleaned_text]
+
+    # For longer sections, use headings + size rules
+    sections = split_by_headings(cleaned_text)
+
+    per_section_chunks: list[str] = []
+
+    for section in sections:
+        toks = tokenize(section)
         n = len(toks)
         if n == 0:
-            return []
+            continue
         if n < 300:
-            return [text]
-        if n <= 600:
-            return chunk_by_size(toks, max_tokens=300, overlap=30)
-        return chunk_by_size(toks, max_tokens=300, overlap=30)
+            per_section_chunks.append(section)
+        else:
+            per_section_chunks.extend(chunk_by_size(toks, max_tokens=300, overlap=30))
 
-    if n_tokens <= 600:
-        return chunk_section(cleaned_text)
+    if not per_section_chunks:
+        return []
 
-    all_chunks: list[str] = []
-    for section in split_by_headings(cleaned_text):
-        all_chunks.extend(chunk_section(section))
-    return all_chunks
+    # Global pass: merge small chunks into their predecessors
+    return merge_small_chunks(per_section_chunks, min_tokens=SMALL_CHUNK_TOKENS)
+
 
 
 # %%
@@ -370,14 +400,14 @@ for _, row in allowed_df.iterrows():
         continue
 
     if len(chunks) == 1:
-        chunk_rows.append(
-            {
-                "pmid": base_pmid,
-                "title": base_title,
-                "abstract": chunks[0],
-                "source_path": path,
-            }
-        )
+            chunk_rows.append(
+                {
+                    "pmid": base_pmid,
+                    "title": base_title,
+                    "abstract": f"{base_title}\n\n{chunks[0]}",  # prepend title
+                    "source_path": path,
+                }
+            )
     else:
         for idx, chunk_text in enumerate(chunks, start=1):
             pmid = f"{base_pmid}-{idx}"
@@ -386,7 +416,7 @@ for _, row in allowed_df.iterrows():
                 {
                     "pmid": pmid,
                     "title": title,
-                    "abstract": chunk_text,
+                    "abstract": f"{base_title}\n\n{chunk_text}",  # prepend title to every chunk
                     "source_path": path,
                 }
             )
@@ -400,6 +430,52 @@ print("\nWord count summary for notebook chunks:")
 print(chunks_df["word_count"].describe())
 
 chunks_df[["pmid", "title", "word_count"]].head()
+
+# %%
+# Inspect chunks with fewer than 50 tokens
+
+small_chunks = chunks_df[chunks_df["word_count"] < 50].copy()
+print("Number of chunks with < 50 tokens:", len(small_chunks))
+if not small_chunks.empty:
+    print("\nSample of small chunks (<50 tokens):")
+    for _, row in small_chunks.head(20).iterrows():
+        text = row["abstract"]
+        toks = tokenize(text)
+        preview = " ".join(toks[:])
+        print("\n---")
+        print(f"pmid: {row['pmid']}")
+        print(f"source_path: {row['source_path']}")
+        print(f"word_count: {row['word_count']}")
+        print(f"preview: {preview}...")
+
+# %%
+chunks_df = chunks_df[chunks_df["word_count"] >= 30].reset_index(drop=True)
+
+# %%
+# Histogram of chunk word counts
+
+import matplotlib.pyplot as plt
+
+plt.figure(figsize=(6, 4))
+chunks_df["word_count"].hist(bins=30)
+plt.xlabel("Words per chunk")
+plt.ylabel("Frequency")
+plt.title("Chunk word-count distribution (notebook chunks, >=50 words)")
+plt.tight_layout()
+plt.show()
+
+# %%
+# Histogram of section word counts BEFORE chunking (allowed sections)
+
+allowed_df["section_word_count"] = allowed_df["cleaned"].str.split().str.len()
+
+plt.figure(figsize=(6, 4))
+allowed_df["section_word_count"].hist(bins=30)
+plt.xlabel("Words per section (before chunking)")
+plt.ylabel("Frequency")
+plt.title("Section word-count distribution (allowed sections, before chunking)")
+plt.tight_layout()
+plt.show()
 
 # %%
 # Print detailed chunking examples for a few docs
@@ -429,9 +505,40 @@ for path in example_paths:
     for i, row in ex_chunks.sort_values("pmid").iterrows():
         text = row["abstract"]
         tokens = tokenize(text)
-        preview = " ".join(tokens[:])
+        preview = " ".join(tokens[:40])
         print(f"\n  Chunk pmid: {row['pmid']}")
         print(f"  Title: {row['title']}")
+        print(f"  Tokens in chunk: {len(tokens)}")
+        print(f"  Preview: {preview}...")
+
+
+# %%
+# Broader inspection: show chunking for many multi-chunk docs
+
+print("\n" + "#" * 80)
+print("Broader chunking overview for multi-chunk docs")
+
+grouped = chunks_df.groupby("source_path")
+multi_paths = [p for p, g in grouped if len(g) > 1]
+
+for path in multi_paths[:20]:
+    sect = allowed_df[allowed_df["path"] == path]
+    if sect.empty:
+        continue
+    cleaned = sect.iloc[0]["cleaned"]
+    n_tokens = len(tokenize(cleaned))
+    doc_chunks = grouped.get_group(path).sort_values("pmid")
+
+    print("\n" + "=" * 80)
+    print(f"Source path: {path}")
+    print(f"Section tokens (before chunking): {n_tokens}")
+    print(f"Number of chunks: {len(doc_chunks)}")
+
+    for _, row in doc_chunks.iterrows():
+        text = row["abstract"]
+        tokens = tokenize(text)
+        preview = " ".join(tokens[:])
+        print(f"\n  Chunk pmid: {row['pmid']}")
         print(f"  Tokens in chunk: {len(tokens)}")
         print(f"  Preview: {preview}...")
 
