@@ -1,0 +1,10 @@
+2026-03-13 12:07:21 start steps=5 out=/Users/yun/develop/RAG-orange/output/ config=scripts/private_scripts/config.env RUN_SNIPPET_RRF=0
+2026-03-13 12:07:24 step 1 BM25 3s
+2026-03-13 12:07:43 step 2 Dense 19s
+2026-03-13 12:07:44 step 3 Hybrid 1s
+2026-03-13 12:12:07 step 4 Reranker 263s
+2026-03-13 12:12:08 step 5 RRF 1s
+2026-03-13 12:12:08 step Compare skip (condition)
+2026-03-13 12:12:08 step Compare200 skip (condition)
+2026-03-13 13:06:38 step EvidenceGen 3270s
+2026-03-13 13:06:38 end

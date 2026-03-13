@@ -1,0 +1,23 @@
+2026-03-13 12:12:08 [INFO] __main__: Reading rerank run: /Users/yun/develop/RAG-orange/output/rerank_hybrid/runs/best_rrf_orange_qa_MCQ_test_bioasq_top80_rrf_poolR50_poolH50_k60.tsv (top-k=5)
+2026-03-13 12:12:08 [INFO] __main__: Queries in rerank: 200
+2026-03-13 12:12:08 [INFO] __main__: Wrote 200 questions to /Users/yun/develop/RAG-orange/output/rerank_hybrid/post_rerank_orange_qa_MCQ_test_bioasq.json
+2026-03-13 12:12:08 [INFO] __main__: Loading post-rerank JSON: /Users/yun/develop/RAG-orange/output/rerank_hybrid/post_rerank_orange_qa_MCQ_test_bioasq.json
+2026-03-13 12:12:08 [INFO] __main__: Questions: 200, unique PMIDs: 360
+2026-03-13 12:12:08 [INFO] __main__: Indexing corpus: /Users/yun/develop/RAG-orange/data/orange_docs_chunks.jsonl
+2026-03-13 12:12:08 [WARNING] __main__: 6/360 PMIDs not found in corpus (/Users/yun/develop/RAG-orange/data/orange_docs_chunks.jsonl). These documents will have no context.
+2026-03-13 12:12:08 [WARNING] __main__:   missing PMIDs: ['doc-difference', 'doc-granger-causality', 'doc-moving-transform-w-3', 'doc-periodogram-w', 'doc-seasonal-adjustment', 'doc-time-slice']
+2026-03-13 12:12:08 [INFO] __main__: Found 354 / 360 PMIDs in corpus
+2026-03-13 12:12:08 [WARNING] __main__: PMIDs missing from corpus: 23
+2026-03-13 12:12:08 [INFO] __main__: Wrote 200 query records to /Users/yun/develop/RAG-orange/output/evidence_baseline/orange_qa_MCQ_test_bioasq_contexts.json
+2026-03-13 12:12:08 [INFO] __main__: Reading rerank run: /Users/yun/develop/RAG-orange/output/rerank_hybrid/runs/best_rrf_orange_qa_MCQ-con_test_bioasq_top80_rrf_poolR50_poolH50_k60.tsv (top-k=5)
+2026-03-13 12:12:08 [INFO] __main__: Queries in rerank: 200
+2026-03-13 12:12:08 [INFO] __main__: Wrote 200 questions to /Users/yun/develop/RAG-orange/output/rerank_hybrid/post_rerank_orange_qa_MCQ-con_test_bioasq.json
+2026-03-13 12:12:08 [INFO] __main__: Loading post-rerank JSON: /Users/yun/develop/RAG-orange/output/rerank_hybrid/post_rerank_orange_qa_MCQ-con_test_bioasq.json
+2026-03-13 12:12:08 [INFO] __main__: Questions: 200, unique PMIDs: 12
+2026-03-13 12:12:08 [INFO] __main__: Indexing corpus: /Users/yun/develop/RAG-orange/data/orange_docs_chunks.jsonl
+2026-03-13 12:12:08 [INFO] __main__: Found 12 / 12 PMIDs in corpus
+2026-03-13 12:12:08 [INFO] __main__: Wrote 200 query records to /Users/yun/develop/RAG-orange/output/evidence_baseline/orange_qa_MCQ-con_test_bioasq_contexts.json
+2026-03-13 12:40:34 [INFO] __main__: Wrote 200 records to /Users/yun/develop/RAG-orange/output/generation_baseline/orange_qa_MCQ_test_bioasq_answers.json
+2026-03-13 12:40:34 [INFO] __main__: No failed records to rescue (only-504=False).
+2026-03-13 13:06:37 [INFO] __main__: Wrote 200 records to /Users/yun/develop/RAG-orange/output/generation_baseline/orange_qa_MCQ-con_test_bioasq_answers.json
+2026-03-13 13:06:38 [INFO] __main__: No failed records to rescue (only-504=False).

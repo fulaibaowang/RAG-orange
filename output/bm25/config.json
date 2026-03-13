@@ -1,0 +1,25 @@
+{
+  "index_path": "/Users/yun/develop/RAG-orange/index/bm25",
+  "train_json": "/Users/yun/develop/RAG-orange/data/train_test_dataset_bioasq_style/orange_qa_MCQ_test_bioasq.json",
+  "test_batch_jsons": [
+    "/Users/yun/develop/RAG-orange/data/train_test_dataset_bioasq_style/orange_qa_MCQ-con_test_bioasq.json"
+  ],
+  "test_dir": null,
+  "out_dir": "/Users/yun/develop/RAG-orange/output//bm25",
+  "threads": 4,
+  "java_mem": null,
+  "k_eval": 80,
+  "ks": "50,100,200,300,400,500,1000,2000,5000",
+  "k_feedback": 50,
+  "rm3_fb_docs": 20,
+  "rm3_fb_terms": 30,
+  "rm3_lambda": 0.6,
+  "disable_rm3": true,
+  "include_bm25": true,
+  "no_exclude_test_qids": false,
+  "no_eval": true,
+  "save_runs": true,
+  "save_per_query": true,
+  "save_zero_recall": false,
+  "query_field": "body_query"
+}

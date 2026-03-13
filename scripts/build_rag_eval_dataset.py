@@ -52,7 +52,14 @@ from typing import Any, Dict, List
 
 
 def load_contexts(path: Path, top_k: int) -> Dict[str, List[str]]:
-    """Return mapping qid -> list of context texts (up to top_k each)."""
+    """
+    Return mapping qid -> list of context texts (up to top_k each).
+
+    The input can be either:
+      - a *_contexts.json from build_contexts_from_documents.py, or
+      - a *_answers.json from generate_answers.py, which has the same
+        question/contexts structure plus answer fields.
+    """
     with path.open("r", encoding="utf-8") as f:
         data = json.load(f)
 
@@ -101,6 +108,7 @@ def build_rag_eval_dataset(
     contexts_path: Path,
     original_mcq_path: Path,
     top_k: int,
+    restrict_to_contexts: bool,
 ) -> List[Dict[str, Any]]:
     """Combine contexts with the original MCQ dataset."""
     contexts_by_qid = load_contexts(contexts_path, top_k=top_k)
@@ -118,6 +126,9 @@ def build_rag_eval_dataset(
         qid = f"{stem}_{i}"
         contexts = contexts_by_qid.get(qid)
         if not contexts:
+            if restrict_to_contexts:
+                # Skip questions that were not part of the pipeline subset.
+                continue
             # No contexts for this question; keep it unchanged.
             augmented.append(item)
             continue
@@ -159,7 +170,10 @@ def parse_args() -> argparse.Namespace:
         "--contexts-json",
         type=Path,
         required=True,
-        help="Path to *_contexts.json produced by build_contexts_from_documents.py.",
+        help=(
+            "Path to questions JSON with contexts: either *_contexts.json from "
+            "build_contexts_from_documents.py or *_answers.json from generate_answers.py."
+        ),
     )
     parser.add_argument(
         "--original-mcq",
@@ -179,6 +193,14 @@ def parse_args() -> argparse.Namespace:
         default=5,
         help="Maximum number of contexts to inject per question.",
     )
+    parser.add_argument(
+        "--restrict-to-contexts",
+        action="store_true",
+        help=(
+            "If set, only include questions that have contexts in --contexts-json "
+            "(useful when the pipeline was run on a subset)."
+        ),
+    )
     return parser.parse_args()
 
 
@@ -189,6 +211,7 @@ def main() -> None:
         contexts_path=args.contexts_json,
         original_mcq_path=args.original_mcq,
         top_k=args.top_k,
+        restrict_to_contexts=args.restrict_to_contexts,
     )
 
     args.output.parent.mkdir(parents=True, exist_ok=True)

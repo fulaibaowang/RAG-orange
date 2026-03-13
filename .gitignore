@@ -8,3 +8,4 @@
 .vscode/
 .venv/
 .cursor/
+output_smallsubset/

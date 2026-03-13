@@ -22,4 +22,4 @@ python scripts/shared_scripts/index/build_dense_hnsw_index_from_jsonl_shards.py 
   --batch_size 8 \
   --dedup_pmids 
 
-scripts/shared_scripts/run_retrieval_rerank_pipeline.sh --config scripts/private_scripts/config.env
+time scripts/shared_scripts/run_retrieval_rerank_pipeline.sh --config scripts/private_scripts/config.env
