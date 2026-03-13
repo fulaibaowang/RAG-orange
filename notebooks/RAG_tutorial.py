@@ -127,7 +127,7 @@ print("Baseline Evaluation Results:", baseline_results)
 # %% [markdown] id="01ea7d7b"
 # This is the baseline results by Qwen/Qwen3-0.6B before fine tuning:
 #
-# Evaluation Results: {'accuracy_mcq': 5.0, 'se_mcq': 1.54, 'accuracy_mcq_con': 13.5, 'se_mcq_con': 2.42}
+#     Evaluation Results: {'accuracy_mcq': 5.0, 'se_mcq': 1.54, 'accuracy_mcq_con': 13.5, 'se_mcq_con': 2.42}
 #
 # Fine tuning and token injection results (for reference, not re-run here):
 #
@@ -194,7 +194,7 @@ def get_top_hits(runs_df, qid, n=5):
     q = runs_df[runs_df['qid'] == qid].sort_values('rank').head(n)
     return q[['docno', 'rank'] + (['score'] if 'score' in q.columns and q['score'].notna().any() else [])]
 
-def show_chunk_text(docno, max_chars=500):
+def show_chunk_text(docno, max_chars=1000):
     """Display a chunk's title and text."""
     chunk = chunks_by_id.get(docno)
     if chunk is None:
@@ -227,6 +227,21 @@ def show_retrieval_comparison(qid, question_text, runs_dict, top_n=3):
         print(f"\n  Top-1 for {first_method}:")
         show_chunk_text(docno)
 
+# Helper to get the full MCQ prompt (question + multiple-choice options)
+def get_mcq_prompt_with_choices(qid, dataset):
+    """
+    Return the full user message (question + options) for a given MCQ id.
+
+    The qid follows the pattern '<stem>_<index>', where <stem> matches the
+    TESTDATA_MCQ_FILE stem, and index is the 0-based position in the dataset.
+    """
+    try:
+        stem, idx_str = qid.rsplit("_", 1)
+        idx = int(idx_str)
+    except Exception:
+        raise ValueError(f"Unexpected qid format: {qid}")
+    return dataset[idx]["messages"][1]["content"]
+
 # %% [markdown]
 # ### 2.2 Example 1: BM25 vs Dense vs Hybrid
 #
@@ -239,9 +254,10 @@ def show_retrieval_comparison(qid, question_text, runs_dict, top_n=3):
 
 # %%
 qid_ex1 = "orange_qa_MCQ_test_19"
+question_ex1 = get_mcq_prompt_with_choices(qid_ex1, test_mcq_dataset)
 show_retrieval_comparison(
     qid_ex1,
-    "What is the source of the data in GEO Data Sets?",
+    question_ex1,
     {
         "BM25": bm25_runs,
         "Dense": dense_runs,
@@ -251,7 +267,7 @@ show_retrieval_comparison(
 )
 
 # %% [markdown]
-# ### 2.3 Example 2: Rerank corrects Hybrid
+# ### 2.3 Example 2: Rerank corrects hybrid retrieval
 #
 # Question: *"Which calibration method uses Isotonic Regression?"*
 #
@@ -265,9 +281,10 @@ show_retrieval_comparison(
 
 # %%
 qid_ex2 = "orange_qa_MCQ_test_152"
+question_ex2 = get_mcq_prompt_with_choices(qid_ex2, test_mcq_dataset)
 show_retrieval_comparison(
     qid_ex2,
-    "Which calibration method uses Isotonic Regression?",
+    question_ex2,
     {
         "BM25": bm25_runs,
         "Dense": dense_runs,
@@ -275,7 +292,7 @@ show_retrieval_comparison(
         "Rerank (cross-encoder)": rerank_runs,
         "Rerank+Hybrid RRF": rerank_hybrid_runs,
     },
-    top_n=5,
+    top_n=3,
 )
 
 # %% [markdown]
@@ -343,11 +360,116 @@ rag_mcq_con_dataset = build_rag_eval_dataset(
 print(f"RAG-augmented MCQ dataset: {len(rag_mcq_dataset)} questions")
 print(f"RAG-augmented MCQ-con dataset: {len(rag_mcq_con_dataset)} questions")
 
+# %% [markdown]
+# The original MCQ prompts say *"based on your knowledge"* and the system
+# message has no instruction to use the provided context. The RAG pipeline
+# (llama3.3) uses `scripts/prompts/system.txt` which explicitly says
+# *"You MUST answer using ONLY the provided Evidence Contexts."*
+#
+# We patch the messages so Qwen3-0.6B gets the same kind of instruction.
+
 # %%
-print("Sample: original user message (first 200 chars):")
-print(test_mcq_dataset[0]['messages'][1]['content'][:200])
-print("\nSample: RAG-augmented user message (first 400 chars):")
-print(rag_mcq_dataset[0]['messages'][1]['content'][:400])
+RAG_SYSTEM_PROMPT = (
+    "You are a helpful assistant that can answer questions about the Orange Data Mining software.\n"
+    "You MUST answer using ONLY the provided Context.\n"
+    "Answer with a single letter (A, B, C, or D) corresponding to the correct answer."
+)
+
+OLD_USER_INSTRUCTION = (
+    "Answer the following question based on your knowledge of the Orange Data Mining software.\n"
+    "Make sure you answer the question with a single letter corresponding to the correct answer."
+)
+NEW_USER_INSTRUCTION = (
+    "Answer the following question using ONLY the provided context about the Orange Data Mining software.\n"
+    "Answer with a single letter (A, B, C, or D)."
+)
+
+def patch_rag_prompts(dataset):
+    """Replace system and user instructions to align with the RAG pipeline prompts."""
+    for item in dataset:
+        msgs = item['messages']
+        msgs[0]['content'] = RAG_SYSTEM_PROMPT
+        msgs[1]['content'] = msgs[1]['content'].replace(OLD_USER_INSTRUCTION, NEW_USER_INSTRUCTION)
+    return dataset
+
+rag_mcq_dataset = patch_rag_prompts(rag_mcq_dataset)
+rag_mcq_con_dataset = patch_rag_prompts(rag_mcq_con_dataset)
+
+# %%
+print("Patched system message:")
+print(rag_mcq_dataset[0]['messages'][0]['content'])
+print("\nSample: RAG-augmented user message (first 5000 chars):")
+print(rag_mcq_dataset[0]['messages'][1]['content'][:5000])
+
+# %% [markdown]
+# #### 2.5.1 Inspect raw Qwen3-0.6B generations (debug)
+#
+# Before trusting the accuracy numbers, it is useful to look at a few raw
+# generations from Qwen3-0.6B to see:
+# - whether the model outputs just a letter (A/B/C/...), or a longer sentence,
+# - whether it follows the `/no_think` instruction and whether any `<think>` tags
+#   appear in the output,
+# - how often the extracted answer (after stripping any thinking) matches the
+#   gold letter.
+#
+# The helper below prints a small sample of MCQ items together with:
+# - the (truncated) user prompt,
+# - the gold answer letter,
+# - the raw decoded model output,
+# - the extracted prediction that `evaluate_model` compares against the gold.
+
+# %%
+def debug_qwen_outputs(sample_dataset, num_examples=5):
+    model.eval()
+    with torch.no_grad():
+        batch = sample_dataset[:num_examples]
+        batch_texts = []
+        gold_answers = []
+        user_messages = []
+
+        for item in batch:
+            system_user_messages = [
+                {"role": item["messages"][0]["role"], "content": item["messages"][0]["content"]},
+                {"role": item["messages"][1]["role"], "content": item["messages"][1]["content"] + "\n /no_think"},
+            ]
+            gold_answers.append(item["messages"][2]["content"])
+            user_messages.append(item["messages"][1]["content"])
+
+            text = tokenizer.apply_chat_template(
+                system_user_messages,
+                tokenize=False,
+                add_generation_prompt=True,
+                enable_tracking=False,
+            )
+            batch_texts.append(text)
+
+        inputs = tokenizer(batch_texts, return_tensors="pt", padding=True, truncation=True).to(model.device)
+        outputs = model.generate(
+            **inputs,
+            max_new_tokens=100,
+            do_sample=False,
+            pad_token_id=tokenizer.eos_token_id,
+        )
+
+        for i, (output, gold, user_msg) in enumerate(zip(outputs, gold_answers, user_messages)):
+            input_length = inputs.input_ids[i].shape[0]
+            generated_token_ids = output[input_length:]
+            decoded_text = tokenizer.decode(generated_token_ids, skip_special_tokens=True).strip()
+
+            if "</think>" in decoded_text:
+                prediction = decoded_text.split("</think>")[1].strip()
+            else:
+                prediction = decoded_text.strip()
+
+            print("=" * 80)
+            print(f"Example {i}")
+            print("- User message (truncated):")
+            print(user_msg[:400] + ("..." if len(user_msg) > 400 else ""))
+            print("\n- Gold answer:", repr(gold))
+            print("- Raw decoded output:")
+            print(decoded_text)
+            print("- Extracted prediction (compared to gold):", repr(prediction))
+            print()
 
 # %%
 print("Evaluating Qwen3-0.6B with RAG context on MCQ...")
@@ -357,6 +479,13 @@ print(f"MCQ with RAG: accuracy={accuracy_mcq_rag:.1f}%, SE={se_mcq_rag:.2f}")
 print("\nEvaluating Qwen3-0.6B with RAG context on MCQ-con...")
 accuracy_mcq_con_rag, se_mcq_con_rag = evaluate_model(model, tokenizer, rag_mcq_con_dataset, batch_size=MODEL_CONFIG['batch_size'])
 print(f"MCQ-con with RAG: accuracy={accuracy_mcq_con_rag:.1f}%, SE={se_mcq_con_rag:.2f}")
+
+# %%
+# Uncomment to inspect a few raw generations from Qwen3-0.6B.
+# Start with the RAG-augmented MCQ dataset; you can also try the original
+# (non-RAG) dataset by passing `test_mcq_dataset` instead.
+#
+# debug_qwen_outputs(rag_mcq_dataset, num_examples=5)
 
 # %% [markdown]
 # ### 2.6 Summary
