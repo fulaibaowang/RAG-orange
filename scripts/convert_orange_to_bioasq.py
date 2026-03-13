@@ -39,34 +39,6 @@ from pathlib import Path
 from typing import Any, Dict, List
 
 
-def extract_question_text(user_content: str) -> str:
-    """
-    Extract the question text from the user message content.
-
-    Heuristic:
-    - Find the substring after "Question:".
-    - If "Answers:" exists, stop before it.
-    - Strip leading/trailing whitespace.
-    """
-    if not user_content:
-        return ""
-
-    marker = "Question:"
-    start = user_content.find(marker)
-    if start == -1:
-        # Fallback: return whole content
-        return user_content.strip()
-
-    start += len(marker)
-    end_marker = "\n\nAnswers:"
-    end = user_content.find(end_marker, start)
-    if end == -1:
-        # Fallback: take everything after "Question:"
-        return user_content[start:].strip()
-
-    return user_content[start:end].strip()
-
-
 def convert_mcq_to_bioasq(input_path: Path) -> Dict[str, List[Dict[str, Any]]]:
     """Load MCQ JSON array and convert to BioASQ-style questions dict."""
     with input_path.open("r", encoding="utf-8") as f:
@@ -92,15 +64,17 @@ def convert_mcq_to_bioasq(input_path: Path) -> Dict[str, List[Dict[str, Any]]]:
                 file=sys.stderr,
             )
 
-        question_text = extract_question_text(user_msg.get("content", ""))
+        # For MCQ, we keep the full user prompt (instructions + question + options)
+        # so downstream components (e.g., generation) see the exact same text.
+        question_text = str(user_msg.get("content", "")).strip()
         qid = f"{stem}_{i}"
 
         questions.append(
             {
                 "id": qid,
                 "body": question_text,
-                # Type is not critical for retrieval-only runs; use a generic value.
-                "type": "factoid",
+                # Explicitly mark all Orange QA items as multiple-choice questions.
+                "type": "MCQ",
             }
         )
 
