@@ -95,6 +95,17 @@ from pathlib import Path
 from transformers import AutoTokenizer, AutoModelForCausalLM
 
 sys.path.append('../src')
+if "__file__" in globals():
+    PROJECT_ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
+else:
+    # In Colab, after `os.chdir('RAG-orange')`, cwd *is* the project root
+    PROJECT_ROOT = os.path.abspath(os.getcwd())
+
+SRC_DIR = os.path.join(PROJECT_ROOT, "src")
+if SRC_DIR not in sys.path:
+    sys.path.append(SRC_DIR)
+
+from evaluation_function import evaluate_model
 from evaluation_function import evaluate_model
 
 # %% [markdown] id="19405c6b"
@@ -117,9 +128,11 @@ for key, value in MODEL_CONFIG.items():
 
 # %% id="d3c8e619"
 if "__file__" in globals():
+    # Running as a script from inside notebooks/ → go one level up
     PROJECT_ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
 else:
-    PROJECT_ROOT = os.path.abspath(os.path.join(os.getcwd(), ".."))
+    # Running in an environment like Colab where we already `cd` into the repo root
+    PROJECT_ROOT = os.path.abspath(os.getcwd())
 
 DATA_DIR = os.path.join(PROJECT_ROOT, 'data', 'train_test_dataset')
 TESTDATA_MCQ_FILE = os.path.join(DATA_DIR, 'orange_qa_MCQ_test.jsonl')
@@ -385,13 +398,13 @@ evidence_mcq_con_path = Path(OUTPUT_DIR) / 'evidence_baseline' / 'orange_qa_MCQ-
 rag_mcq_dataset = build_rag_eval_dataset(
     contexts_path=evidence_mcq_path,
     original_mcq_path=Path(TESTDATA_MCQ_FILE),
-    top_k=1,
+    top_k=2,
     restrict_to_contexts=False,
 )
 rag_mcq_con_dataset = build_rag_eval_dataset(
     contexts_path=evidence_mcq_con_path,
     original_mcq_path=Path(TESTDATA_MCQ_CON_FILE),
-    top_k=1,
+    top_k=2,
     restrict_to_contexts=False,
 )
 
@@ -514,7 +527,7 @@ def debug_qwen_outputs(sample_dataset, num_examples=5):
 # Start with the RAG-augmented MCQ dataset; you can also try the original
 # (non-RAG) dataset by passing `test_mcq_dataset` instead.
 #
-debug_qwen_outputs(rag_mcq_dataset, num_examples=2)
+debug_qwen_outputs(rag_mcq_dataset, num_examples=10)
 
 # %%
 print("Evaluating Qwen3-0.6B with RAG context on MCQ...")
@@ -629,24 +642,16 @@ print(f"Fine-tuned MCQ-con with RAG: accuracy={accuracy_mcq_con_rag_ft:.1f}%, SE
 
 # %% [markdown]
 # ### 2.7 Summary
-#
-# | Setting | MCQ Accuracy | MCQ-con Accuracy |
-# |---|---|---|
-# | Qwen3-0.6B (no context) | 5.0% | 13.5% |
-# | Qwen3-0.6B + RAG context | *run above* | *run above* |
-# | Qwen3-0.6B + RAG context (fine-tuned) | *run above* | *run above* |
-# | llama3.3 + RAG context | *run above* | *run above* |
-# | Qwen3-0.6B + LoRA fine-tuning (no RAG, reference) | 64.0% | 13.5% |
 
 # %%
 print("=" * 75)
 print(f"{'Setting':<45} {'MCQ':>10} {'MCQ-con':>10}")
 print("-" * 75)
 print(f"{'Qwen3-0.6B (no context)':<45} {'5.0%':>10} {'13.5%':>10}")
+print(f"{'Qwen3-0.6B + LoRA (no RAG)':<45} {'64.0%':>10} {'13.5%':>10}")
 print(f"{'Qwen3-0.6B + RAG context':<45} {accuracy_mcq_rag:>9.1f}% {accuracy_mcq_con_rag:>9.1f}%")
 print(f"{'Qwen3-0.6B + RAG context (fine-tuned)':<45} {accuracy_mcq_rag_ft:>9.1f}% {accuracy_mcq_con_rag_ft:>9.1f}%")
 print(f"{'llama3.3 + RAG context':<45} {acc_llama_mcq:>9.1f}% {acc_llama_mcq_con:>9.1f}%")
-print(f"{'Qwen3-0.6B + LoRA (no RAG, reference)':<45} {'64.0%':>10} {'13.5%':>10}")
 print("=" * 75)
 
 # %%
