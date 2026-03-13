@@ -395,17 +395,17 @@ from build_rag_eval_dataset import build_rag_eval_dataset
 evidence_mcq_path = Path(OUTPUT_DIR) / 'evidence_baseline' / 'orange_qa_MCQ_test_bioasq_contexts.json'
 evidence_mcq_con_path = Path(OUTPUT_DIR) / 'evidence_baseline' / 'orange_qa_MCQ-con_test_bioasq_contexts.json'
 
-# Build RAG datasets for top_k=2 and top_k=3 (both used for base model evaluation; debug & fine-tuning use top_k=3).
-rag_mcq_dataset_k2 = build_rag_eval_dataset(
+# Build RAG datasets for top_k=1 and top_k=3 (both used for base model evaluation; debug & fine-tuning use top_k=3).
+rag_mcq_dataset_k1 = build_rag_eval_dataset(
     contexts_path=evidence_mcq_path,
     original_mcq_path=Path(TESTDATA_MCQ_FILE),
-    top_k=2,
+    top_k=1,
     restrict_to_contexts=False,
 )
-rag_mcq_con_dataset_k2 = build_rag_eval_dataset(
+rag_mcq_con_dataset_k1 = build_rag_eval_dataset(
     contexts_path=evidence_mcq_con_path,
     original_mcq_path=Path(TESTDATA_MCQ_CON_FILE),
-    top_k=2,
+    top_k=1,
     restrict_to_contexts=False,
 )
 rag_mcq_dataset = build_rag_eval_dataset(
@@ -421,8 +421,8 @@ rag_mcq_con_dataset = build_rag_eval_dataset(
     restrict_to_contexts=False,
 )
 
-print(f"RAG-augmented MCQ (top_k=2): {len(rag_mcq_dataset_k2)} questions")
-print(f"RAG-augmented MCQ-con (top_k=2): {len(rag_mcq_con_dataset_k2)} questions")
+print(f"RAG-augmented MCQ (top_k=1): {len(rag_mcq_dataset_k1)} questions")
+print(f"RAG-augmented MCQ-con (top_k=1): {len(rag_mcq_con_dataset_k1)} questions")
 print(f"RAG-augmented MCQ (top_k=3): {len(rag_mcq_dataset)} questions")
 print(f"RAG-augmented MCQ-con (top_k=3): {len(rag_mcq_con_dataset)} questions")
 
@@ -458,8 +458,8 @@ def patch_rag_prompts(dataset):
         msgs[1]['content'] = msgs[1]['content'].replace(OLD_USER_INSTRUCTION, NEW_USER_INSTRUCTION)
     return dataset
 
-rag_mcq_dataset_k2 = patch_rag_prompts(rag_mcq_dataset_k2)
-rag_mcq_con_dataset_k2 = patch_rag_prompts(rag_mcq_con_dataset_k2)
+rag_mcq_dataset_k1 = patch_rag_prompts(rag_mcq_dataset_k1)
+rag_mcq_con_dataset_k1 = patch_rag_prompts(rag_mcq_con_dataset_k1)
 rag_mcq_dataset = patch_rag_prompts(rag_mcq_dataset)
 rag_mcq_con_dataset = patch_rag_prompts(rag_mcq_con_dataset)
 
@@ -541,14 +541,14 @@ def debug_qwen_outputs(sample_dataset, num_examples=5):
 
 # %%
 # Inspect raw Qwen3-0.6B generations (uses RAG dataset with top_k=3).
-# You can also try rag_mcq_dataset_k2 or test_mcq_dataset.
+# You can also try rag_mcq_dataset_k1 or test_mcq_dataset.
 # debug_qwen_outputs(rag_mcq_dataset, num_examples=5)
 
 # %%
-print("Evaluating Qwen3-0.6B with RAG context (top_k=2)...")
-accuracy_mcq_rag_k2, se_mcq_rag_k2 = evaluate_model(model, tokenizer, rag_mcq_dataset_k2, batch_size=MODEL_CONFIG['batch_size'])
-accuracy_mcq_con_rag_k2, se_mcq_con_rag_k2 = evaluate_model(model, tokenizer, rag_mcq_con_dataset_k2, batch_size=MODEL_CONFIG['batch_size'])
-print(f"  MCQ: {accuracy_mcq_rag_k2:.1f}%, MCQ-con: {accuracy_mcq_con_rag_k2:.1f}%")
+print("Evaluating Qwen3-0.6B with RAG context (top_k=1)...")
+accuracy_mcq_rag_k1, se_mcq_rag_k1 = evaluate_model(model, tokenizer, rag_mcq_dataset_k1, batch_size=MODEL_CONFIG['batch_size'])
+accuracy_mcq_con_rag_k1, se_mcq_con_rag_k1 = evaluate_model(model, tokenizer, rag_mcq_con_dataset_k1, batch_size=MODEL_CONFIG['batch_size'])
+print(f"  MCQ: {accuracy_mcq_rag_k1:.1f}%, MCQ-con: {accuracy_mcq_con_rag_k1:.1f}%")
 
 print("\nEvaluating Qwen3-0.6B with RAG context (top_k=3)...")
 accuracy_mcq_rag, se_mcq_rag = evaluate_model(model, tokenizer, rag_mcq_dataset, batch_size=MODEL_CONFIG['batch_size'])
@@ -660,7 +660,7 @@ print(f"Fine-tuned MCQ-con with RAG: accuracy={accuracy_mcq_con_rag_ft:.1f}%, SE
 # %% [markdown]
 # ### 2.7 Summary
 #
-# Base model (no fine-tuning) is evaluated with RAG using top_k=2 and top_k=3.
+# Base model (no fine-tuning) is evaluated with RAG using top_k=1 and top_k=3.
 # Fine-tuned + RAG uses top_k=3 only.
 
 # %%
@@ -669,7 +669,7 @@ print(f"{'Setting':<45} {'MCQ':>10} {'MCQ-con':>10}")
 print("-" * 75)
 print(f"{'Qwen3-0.6B (no context)':<45} {'5.0%':>10} {'13.5%':>10}")
 print(f"{'Qwen3-0.6B + LoRA (no RAG)':<45} {'64.0%':>10} {'13.5%':>10}")
-print(f"{'Qwen3-0.6B + RAG (top_k=2)':<45} {accuracy_mcq_rag_k2:>9.1f}% {accuracy_mcq_con_rag_k2:>9.1f}%")
+print(f"{'Qwen3-0.6B + RAG (top_k=1)':<45} {accuracy_mcq_rag_k1:>9.1f}% {accuracy_mcq_con_rag_k1:>9.1f}%")
 print(f"{'Qwen3-0.6B + RAG (top_k=3)':<45} {accuracy_mcq_rag:>9.1f}% {accuracy_mcq_con_rag:>9.1f}%")
 print(f"{'Qwen3-0.6B + RAG (fine-tuned, top_k=3)':<45} {accuracy_mcq_rag_ft:>9.1f}% {accuracy_mcq_con_rag_ft:>9.1f}%")
 print(f"{'llama3.3 + RAG context':<45} {acc_llama_mcq:>9.1f}% {acc_llama_mcq_con:>9.1f}%")
