@@ -12,13 +12,13 @@
 #     name: ornagerag-py314
 # ---
 
-# %% [markdown] id="9cd7c256"
+# %% [markdown]
 # # RAG Retrieval and Evaluation Tutorial on Orange3 QA & MCQ dataset
 
-# %% [markdown] id="01a32a07"
+# %% [markdown]
 # ### Preparing the environment
 
-# %% colab={"base_uri": "https://localhost:8080/"} id="22242794" outputId="c79f1cfe-8599-43ca-8e79-68bc232561e8"
+# %%
 # @title 🛠️ Setup: Optional Clone & Install (commented out)
 import os
 import sys
@@ -82,7 +82,7 @@ if IN_COLAB:
 else:
     print("Not running in Google Colab; using existing local environment.")
 
-# %% id="12a95f4e"
+# %%
 import os
 import sys
 import json
@@ -108,12 +108,12 @@ if SRC_DIR not in sys.path:
 from evaluation_function import evaluate_model
 from evaluation_function import evaluate_model
 
-# %% [markdown] id="19405c6b"
+# %% [markdown]
 # ## PART 1: Baseline evaluation with Qwen3-0.6B
 #
 # ### Defining the model config
 
-# %% colab={"base_uri": "https://localhost:8080/"} id="839c457e" outputId="be3afa32-7457-4fa5-fa1d-101e950d3725"
+# %%
 MODEL_CONFIG = {
     "base_model": "Qwen/Qwen3-0.6B",
     "batch_size": 8,
@@ -123,10 +123,10 @@ print("Model configuration:")
 for key, value in MODEL_CONFIG.items():
     print(f"   {key}: {value}")
 
-# %% [markdown] id="e7799f7a"
+# %% [markdown]
 # ## Test dataset and paths
 
-# %% id="d3c8e619"
+# %%
 if "__file__" in globals():
     # Running as a script from inside notebooks/ → go one level up
     PROJECT_ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
@@ -147,12 +147,12 @@ with open(TESTDATA_MCQ_CON_FILE, "r") as f:
 print(f"MCQ test set: {len(test_mcq_dataset)} questions")
 print(f"MCQ-con test set: {len(test_mcq_con_dataset)} questions")
 
-# %% [markdown] id="19d98174"
+# %% [markdown]
 # ### Load the model and tokenizer
 #
 # Let's get familiar with the model and tokenizer. Specifically look at what layers the model has.
 
-# %% id="84f54aca"
+# %%
 print("Loading model and tokenizer...")
 tokenizer = AutoTokenizer.from_pretrained(MODEL_CONFIG['base_model'], padding_side="left")
 
@@ -175,7 +175,7 @@ baseline_results = {
 }
 print("Baseline Evaluation Results:", baseline_results)
 
-# %% [markdown] id="01ea7d7b"
+# %% [markdown]
 # This is the baseline results by Qwen/Qwen3-0.6B before fine tuning:
 #
 #     Evaluation Results: {'accuracy_mcq': 5.0, 'se_mcq': 1.54, 'accuracy_mcq_con': 13.5, 'se_mcq_con': 2.42}
@@ -188,7 +188,7 @@ print("Baseline Evaluation Results:", baseline_results)
 # - after token injection and fine tuning:
 #   {'accuracy_mcq': 60.0, 'se_mcq': 3.46, 'accuracy_mcq_con': 17.0, 'se_mcq_con': 2.66}
 
-# %% [markdown] id="64671df3"
+# %% [markdown]
 # ## PART 2: RAG
 #
 # In this section we explore how Retrieval-Augmented Generation (RAG) affects
