@@ -4,8 +4,8 @@ Generate BioASQ answers from contexts JSON using an LLM.
 
 Reads the JSON produced by build_contexts_from_documents.py (id, body, type,
 documents, contexts), calls an LLM per question, parses ideal_answer and
-evidence_ids (and exact_answer for yesno/factoid/list), and writes a single
-JSON file to output_dir (e.g. output_dir/<stem>_answers.json).
+evidence_ids (and exact_answer for yesno/factoid/list/mcq), and writes a
+single JSON file to output_dir (e.g. output_dir/<stem>_answers.json).
 
 Requires: LLAMA_API_KEY in env or .env at repo root.
 """
@@ -519,7 +519,8 @@ def main() -> int:
 
     def process_one(idx: int, obj: Dict[str, Any]) -> tuple[int, Dict[str, Any]]:
         q_id = obj.get("id")
-        qtype = obj.get("type") or ""
+        qtype_raw = obj.get("type") or ""
+        qtype = (qtype_raw or "").strip().lower()
         question = obj.get("body", "") or ""
         if args.evidence_source == "contexts":
             contexts = obj.get("contexts") or []
@@ -625,8 +626,8 @@ def main() -> int:
                 rec["ideal_answer"] = None
                 rec["evidence_ids"] = []
                 rec["error"] = str(e)
-                qtype = obj.get("type", "summary")
-                if qtype in ("yesno", "factoid", "list"):
+                qtype = (obj.get("type", "summary") or "").strip().lower()
+                if qtype in ("yesno", "factoid", "list", "mcq"):
                     rec["exact_answer"] = None
                 results_by_idx[idx] = rec
             completed_count += 1
@@ -646,7 +647,8 @@ def main() -> int:
             rec["ideal_answer"] = None
             rec["evidence_ids"] = []
             rec["error"] = "missing_from_results"
-            if obj.get("type") in ("yesno", "factoid", "list", "mcq"):
+            qtype = (obj.get("type") or "").strip().lower()
+            if qtype in ("yesno", "factoid", "list", "mcq"):
                 rec["exact_answer"] = None
             records_out.append(rec)
             logger.warning("No result for index %d (id=%s); added record with error", i, obj.get("id"))

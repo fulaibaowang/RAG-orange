@@ -345,8 +345,8 @@ def split_into_chunks(cleaned_text: str) -> list[str]:
 
       - always split by headings first (if any headings are found)
       - for each heading section:
-          * if < 300 tokens: keep as-is (no overlap)
-          * if ≥ 300 tokens: use 300-token windows with 30-token overlap
+          * if < 350 tokens: keep as-is (no overlap)
+          * if ≥ 350 tokens: use 350-token windows with 30-token overlap
       - after all sections are chunked, merge any final chunks smaller
         than SMALL_CHUNK_TOKENS into their neighbors.
     """
@@ -355,7 +355,7 @@ def split_into_chunks(cleaned_text: str) -> list[str]:
         return []
 
     # If the whole section is short, keep it as a single chunk
-    if len(top_tokens) < 300:
+    if len(top_tokens) < 350:
         return [cleaned_text]
 
     # For longer sections, use headings + size rules
@@ -368,10 +368,10 @@ def split_into_chunks(cleaned_text: str) -> list[str]:
         n = len(toks)
         if n == 0:
             continue
-        if n < 300:
+        if n < 350:
             per_section_chunks.append(section)
         else:
-            per_section_chunks.extend(chunk_by_size(toks, max_tokens=300, overlap=30))
+            per_section_chunks.extend(chunk_by_size(toks, max_tokens=350, overlap=30))
 
     if not per_section_chunks:
         return []
@@ -429,7 +429,7 @@ print("Total chunks (notebook prototype):", len(chunks_df))
 print("\nWord count summary for notebook chunks:")
 print(chunks_df["word_count"].describe())
 
-chunks_df[["pmid", "title", "word_count"]].head()
+chunks_df[["pmid", "title", "word_count"]]
 
 # %%
 # Inspect chunks with fewer than 50 tokens
@@ -460,7 +460,7 @@ plt.figure(figsize=(6, 4))
 chunks_df["word_count"].hist(bins=30)
 plt.xlabel("Words per chunk")
 plt.ylabel("Frequency")
-plt.title("Chunk word-count distribution (notebook chunks, >=50 words)")
+plt.title("Chunk word-count distribution (notebook chunks, >=30 words)")
 plt.tight_layout()
 plt.show()
 
@@ -469,8 +469,8 @@ plt.show()
 
 allowed_df["section_word_count"] = allowed_df["cleaned"].str.split().str.len()
 
-plt.figure(figsize=(6, 4))
-allowed_df["section_word_count"].hist(bins=30)
+plt.figure(figsize=(8, 4))
+allowed_df["section_word_count"].hist(bins=100)
 plt.xlabel("Words per section (before chunking)")
 plt.ylabel("Frequency")
 plt.title("Section word-count distribution (allowed sections, before chunking)")

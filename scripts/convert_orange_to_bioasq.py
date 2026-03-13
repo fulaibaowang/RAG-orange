@@ -63,16 +63,43 @@ def convert_mcq_to_bioasq(input_path: Path) -> Dict[str, List[Dict[str, Any]]]:
                 f"expected 'user'",
                 file=sys.stderr,
             )
-
         # For MCQ, we keep the full user prompt (instructions + question + options)
-        # so downstream components (e.g., generation) see the exact same text.
-        question_text = str(user_msg.get("content", "")).strip()
+        # in `body` so downstream components (e.g., generation) see the exact same text,
+        # and also expose a question-only field `body_query` (used as retrieval query).
+        raw_content = str(user_msg.get("content", ""))
+        full_prompt = raw_content.strip()
+
+        question_only = full_prompt
+        q_marker = "Question:"
+        a_marker = "Answers:"
+        try:
+            q_idx = raw_content.find(q_marker)
+            a_idx = raw_content.find(a_marker, q_idx + len(q_marker)) if q_idx != -1 else -1
+            if q_idx != -1 and a_idx != -1:
+                question_only = raw_content[q_idx + len(q_marker) : a_idx].strip()
+            else:
+                # Fall back to full prompt if we cannot cleanly parse markers.
+                question_only = full_prompt
+                print(
+                    f"Warning: item {i} in {input_path} is missing expected 'Question:'/'Answers:' markers; "
+                    "using full prompt as body_query.",
+                    file=sys.stderr,
+                )
+        except Exception as exc:  # pragma: no cover - defensive
+            question_only = full_prompt
+            print(
+                f"Warning: failed to parse question-only text for item {i} in {input_path}: {exc!r}; "
+                "using full prompt as body_query.",
+                file=sys.stderr,
+            )
+
         qid = f"{stem}_{i}"
 
         questions.append(
             {
                 "id": qid,
-                "body": question_text,
+                "body": full_prompt,
+                "body_query": question_only,
                 # Explicitly mark all Orange QA items as multiple-choice questions.
                 "type": "MCQ",
             }
