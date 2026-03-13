@@ -1,0 +1,25 @@
+2026-03-13 11:11:51 [INFO] __main__: Reading rerank run: /Users/yun/develop/RAG-orange/output/rerank_hybrid/runs/best_rrf_orange_qa_MCQ_test_bioasq_smallsubst_top80_rrf_poolR50_poolH50_k60.tsv (top-k=5)
+2026-03-13 11:11:51 [INFO] __main__: Queries in rerank: 11
+2026-03-13 11:11:51 [INFO] __main__: Wrote 11 questions to /Users/yun/develop/RAG-orange/output/rerank_hybrid/post_rerank_orange_qa_MCQ_test_bioasq_smallsubst.json
+2026-03-13 11:11:51 [INFO] __main__: Loading post-rerank JSON: /Users/yun/develop/RAG-orange/output/rerank_hybrid/post_rerank_orange_qa_MCQ_test_bioasq_smallsubst.json
+2026-03-13 11:11:51 [INFO] __main__: Questions: 11, unique PMIDs: 29
+2026-03-13 11:11:51 [INFO] __main__: Indexing corpus: /Users/yun/develop/RAG-orange/data/orange_docs_chunks.jsonl
+2026-03-13 11:11:51 [WARNING] __main__: 4/29 PMIDs not found in corpus (/Users/yun/develop/RAG-orange/data/orange_docs_chunks.jsonl). These documents will have no context.
+2026-03-13 11:11:51 [WARNING] __main__:   missing PMIDs: ['core-data-11', 'core-data-13', 'core-data-7', 'core-distances-1']
+2026-03-13 11:11:51 [INFO] __main__: Found 25 / 29 PMIDs in corpus
+2026-03-13 11:11:51 [WARNING] __main__: PMIDs missing from corpus: 6
+2026-03-13 11:11:51 [INFO] __main__: Wrote 11 query records to /Users/yun/develop/RAG-orange/output/evidence_baseline/orange_qa_MCQ_test_bioasq_smallsubst_contexts.json
+2026-03-13 11:13:52 [WARNING] __main__: LLM call failed after 3 attempts for id=orange_qa_MCQ_test_7: mcq exact_answer must be a string or a non-empty list of strings
+2026-03-13 11:14:02 [WARNING] __main__: LLM call failed after 3 attempts for id=orange_qa_MCQ_test_9: mcq exact_answer must be a string or a non-empty list of strings
+2026-03-13 11:14:11 [INFO] __main__: Wrote 11 records to /Users/yun/develop/RAG-orange/output/generation_baseline/orange_qa_MCQ_test_bioasq_smallsubst_answers.json
+2026-03-13 11:14:12 [INFO] __main__: Found 2 failed record(s) to rescue (only-504=False).
+2026-03-13 11:14:12 [INFO] __main__:   id=orange_qa_MCQ_test_7 error=mcq exact_answer must be a string or a non-empty list of strings
+2026-03-13 11:14:12 [INFO] __main__:   id=orange_qa_MCQ_test_9 error=mcq exact_answer must be a string or a non-empty list of strings
+2026-03-13 11:14:12 [INFO] __main__: Running: /Users/yun/develop/RAG-orange/.venv/bin/python /Users/yun/develop/RAG-orange/scripts/shared_scripts/generation/generate_answers.py --input-path /var/folders/yr/ljjqmpj92wncw9wrv495wq300000gn/T/rescue_gen_pte40t9u/rescue_contexts.json --output-dir /var/folders/yr/ljjqmpj92wncw9wrv495wq300000gn/T/rescue_gen_pte40t9u/out --timeout 300 --retry-sleep 60 --max-chars-per-context 2000 --concurrency 1
+2026-03-13 11:14:16 [WARNING] __main__: LLM call failed after 3 attempts for id=orange_qa_MCQ_test_7: mcq exact_answer must be a string or a non-empty list of strings
+2026-03-13 11:14:16 [INFO] __main__: Generation progress: 1/2
+2026-03-13 11:14:24 [INFO] __main__: Generation progress: 2/2
+2026-03-13 11:14:24 [INFO] __main__: Wrote 2 records to /var/folders/yr/ljjqmpj92wncw9wrv495wq300000gn/T/rescue_gen_pte40t9u/out/rescue_answers.json
+2026-03-13 11:14:25 [INFO] __main__: Replaced 2 record(s) with rescued results.
+2026-03-13 11:14:25 [INFO] __main__: Wrote 11 records to /Users/yun/develop/RAG-orange/output/generation_baseline/orange_qa_MCQ_test_bioasq_smallsubst_answers.json
+2026-03-13 11:14:25 [INFO] __main__: Saved failed prompt to /Users/yun/develop/RAG-orange/output/generation_baseline/orange_qa_MCQ_test_7.txt

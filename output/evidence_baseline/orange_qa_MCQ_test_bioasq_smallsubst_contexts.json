@@ -1,0 +1,403 @@
+{
+  "questions": [
+    {
+      "id": "orange_qa_MCQ_test_0",
+      "body": "Answer the following question based on your knowledge of the Orange Data Mining software.\nMake sure you answer the question with a single letter corresponding to the correct answer.\n\nQuestion: Can you save the image of the painted data in the Paint Data widget?\n\nAnswers:\nA: Only as .jpg.\nB: No.\nC: Only as .bmp.\nD: Yes, as .svg or .png.",
+      "type": "MCQ",
+      "documents": [
+        "http://www.ncbi.nlm.nih.gov/pubmed/core-classification-1",
+        "http://www.ncbi.nlm.nih.gov/pubmed/core-data-11",
+        "http://www.ncbi.nlm.nih.gov/pubmed/vp-index",
+        "http://www.ncbi.nlm.nih.gov/pubmed/vp-index-8",
+        "http://www.ncbi.nlm.nih.gov/pubmed/core-data-1"
+      ],
+      "contexts": [
+        {
+          "id": "core-classification-1-1",
+          "doc": "http://www.ncbi.nlm.nih.gov/pubmed/core-classification-1",
+          "text": "Classification (part 1). Classification\n\nClassification\n\n.. index:: classification\n.. index::\n single: data mining; supervised\n\nMuch of Orange is devoted to machine learning methods for classification, or supervised data mining. These methods rely on data with class-labeled instances, like that of senate voting. Here is a code that loads this dataset, displays the first data instance and shows its predicted class (``republican``)::"
+        },
+        {
+          "id": "vp-index-1",
+          "doc": "http://www.ncbi.nlm.nih.gov/pubmed/vp-index",
+          "text": "Report. Report\n\n# Report\n\nIt is possible to compile a report in Orange. We can save the report in .html, .pdf or .report format. Reports allow us to trace back analytical steps as it saves the workflow at which each report segment was created.\n\nEach widget has a report button in the status bar at the bottom. Pressing on the the File icon adds a new section to the report.\n\nReport can be examined with View - Show report.\n\n## Simple example\n\nWe built a simple workflow with File and Scatter Plot, adding a section to the report at each step. Widgets report parameters, visualizations, and other settings. Each section includes a comment for extra explanation.\n\nTo remove a report section, hover on the section in the list on the left. A Trash and an Orange icon will appear. The trash icon removes the section from the report list. Orange icon loads the workflow as it was at the time of creating the section. This is very handy if a colleague wishes to inspect the results. This option is available only if the report is saved in .report format."
+        },
+        {
+          "id": "vp-index-8-1",
+          "doc": "http://www.ncbi.nlm.nih.gov/pubmed/vp-index-8",
+          "text": "Loading your Data (part 8). Loading your Data\n\n## Three-Row Header Format\n\nOrange's legacy native data format is a tab-delimited text file with three header rows. The first row lists the attribute names, the second row defines their type (continuous, discrete, time and string, or abbreviated c, d, t, and s), and the third row an optional role (class, meta, weight, or ignore). Here is an example:"
+        },
+        {
+          "id": "core-data-1-1",
+          "doc": "http://www.ncbi.nlm.nih.gov/pubmed/core-data-1",
+          "text": "The Data (part 1). The Data\n\nThe Data\n\n.. index: data\n\nThis section describes how to load the data in Orange. We also show how to explore the data, perform some basic statistics, and how to sample the data.\n\nData Input\n\n.. index::\n single: data; input\n\nOrange can read files in proprietary tab-delimited format, or can load data from any of the major standard spreadsheet file types, like CSV and Excel. Native format starts with a header row with feature (column) names. The second header row gives the attribute type, which can be numeric, categorical, time, or string. The third header line contains meta information to identify dependent features (class), irrelevant features (ignore) or meta features (meta).\nMore detailed specification is available in :doc:`../reference/data.io`.\nHere are the first few lines from a dataset :download:`lenses.tab <code/lenses.tab>`::"
+        }
+      ]
+    },
+    {
+      "id": "orange_qa_MCQ_test_1",
+      "body": "Answer the following question based on your knowledge of the Orange Data Mining software.\nMake sure you answer the question with a single letter corresponding to the correct answer.\n\nQuestion: What must the input expression consist of in the Curve Fit widget?\n\nAnswers:\nA: A constant.\nB: A polynomial.\nC: A linear equation.\nD: At least one fitting parameter.",
+      "type": "MCQ",
+      "documents": [
+        "http://www.ncbi.nlm.nih.gov/pubmed/core-classification-1",
+        "http://www.ncbi.nlm.nih.gov/pubmed/vp-index",
+        "http://www.ncbi.nlm.nih.gov/pubmed/vp-split",
+        "http://www.ncbi.nlm.nih.gov/pubmed/vp-file-2",
+        "http://www.ncbi.nlm.nih.gov/pubmed/vp-index-1"
+      ],
+      "contexts": [
+        {
+          "id": "core-classification-1-1",
+          "doc": "http://www.ncbi.nlm.nih.gov/pubmed/core-classification-1",
+          "text": "Classification (part 1). Classification\n\nClassification\n\n.. index:: classification\n.. index::\n single: data mining; supervised\n\nMuch of Orange is devoted to machine learning methods for classification, or supervised data mining. These methods rely on data with class-labeled instances, like that of senate voting. Here is a code that loads this dataset, displays the first data instance and shows its predicted class (``republican``)::"
+        },
+        {
+          "id": "vp-index-1",
+          "doc": "http://www.ncbi.nlm.nih.gov/pubmed/vp-index",
+          "text": "Report. Report\n\n# Report\n\nIt is possible to compile a report in Orange. We can save the report in .html, .pdf or .report format. Reports allow us to trace back analytical steps as it saves the workflow at which each report segment was created.\n\nEach widget has a report button in the status bar at the bottom. Pressing on the the File icon adds a new section to the report.\n\nReport can be examined with View - Show report.\n\n## Simple example\n\nWe built a simple workflow with File and Scatter Plot, adding a section to the report at each step. Widgets report parameters, visualizations, and other settings. Each section includes a comment for extra explanation.\n\nTo remove a report section, hover on the section in the list on the left. A Trash and an Orange icon will appear. The trash icon removes the section from the report list. Orange icon loads the workflow as it was at the time of creating the section. This is very handy if a colleague wishes to inspect the results. This option is available only if the report is saved in .report format."
+        },
+        {
+          "id": "vp-split-1",
+          "doc": "http://www.ncbi.nlm.nih.gov/pubmed/vp-split",
+          "text": "Split. Split\n\nSplit\n\nSplit text or categorical variables into indicator variables.\n\nInputs\n\n- Data: data table\n\nOutputs\n\n- Data: data table with added columns\n\nThe widget splits the chosen text or categorical variable into separate variables. The newly-created variables can be categorical (Yes or No) or numeric (0 or 1) indicators, or appearance counts. The widget is typically used with survey data.\n\n1. Select the variable to split. Define the delimiter.\n2. Set the type of output variables. Categorical produces categorical indicator with values Yes and No, Numerical produces a dummy numerical variable with values 0 and 1, while Counts creates a variable that contains the number of appearances of each term. The latter two options are equivalent if each value can appear only once.\n3. If Apply Automatically is ticked, changes are communicated automatically. Alternatively, press Apply.\n\nExample\n\nThe workflow uses data from the Orange survey taken in 2020. The survey was done in Google Forms, which joins responses for multiple choice questions.\n\nTo use this data in the analysis, we have to split on a delimiter, a semicolon in this case. We do this using Split. We pass the data from the File widget to Split and set the parameters.\n\nSay, we wish to observe and count the reasons users like Orange. We split on Reason and set the delimiter to semicolon. The output will be an array of categorical variables. We can observe the results in a Data Table.\n\nThe advantage of Split is that now, we can count each response individually. Say, we observe how the responses differ on the position of the respondent in Box Plot. It seems the professors especially appreciate Orange for its visual programming approach."
+        },
+        {
+          "id": "vp-file-2-1",
+          "doc": "http://www.ncbi.nlm.nih.gov/pubmed/vp-file-2",
+          "text": "File (part 2). File\n\nExample\n\nMost Orange workflows would probably start with the File widget. In the schema below, the widget is used to read the data that is sent to both the Data Table and the Box Plot widget.\n\n### Loading your data\n\n- Orange can import any comma, .xlsx or tab-delimited data file or URL. Use the File widget and then, if needed, select class and meta attributes.\n- To specify the domain and the type of the attribute, attribute names can be preceded with a label followed by a hash. Use c for class and m for meta attribute, i to ignore a column, and C, D, S for continuous, discrete and string attribute types. Examples: C#mpg, mS#name, i#dummy.\n- Orange's native format is a tab-delimited text file with three header rows. The first row contains attribute names, the second the type (continuous, discrete or string), and the third the optional element (class, meta or time)."
+        },
+        {
+          "id": "vp-index-1-1",
+          "doc": "http://www.ncbi.nlm.nih.gov/pubmed/vp-index-1",
+          "text": "Loading your Data (part 1). Loading your Data\n\n# Loading your Data\n\nOrange comes with its own data format, but can also handle native Excel, comma- or tab-delimited data files. The input data set is usually a table, with data instances (samples) in rows and data attributes in columns. Attributes can be of different types (numeric, categorical, datetime, and text) and have assigned roles (input features, meta attributes, and class). Data attribute type and role can be provided in the data table header. They can also be changed in the File widget, while data role can also be modified with Select Columns widget."
+        }
+      ]
+    },
+    {
+      "id": "orange_qa_MCQ_test_2",
+      "body": "Answer the following question based on your knowledge of the Orange Data Mining software.\nMake sure you answer the question with a single letter corresponding to the correct answer.\n\nQuestion: What is the output of the CN2 Rule Viewer widget?\n\nAnswers:\nA: A decision tree\nB: Filtered Data (instances covered by selected rules)\nC: A confusion matrix\nD: A list of attributes",
+      "type": "MCQ",
+      "documents": [
+        "http://www.ncbi.nlm.nih.gov/pubmed/core-classification-1",
+        "http://www.ncbi.nlm.nih.gov/pubmed/vp-pythonscript-3",
+        "http://www.ncbi.nlm.nih.gov/pubmed/vp-tree-1",
+        "http://www.ncbi.nlm.nih.gov/pubmed/vp-confusionmatrix-1",
+        "http://www.ncbi.nlm.nih.gov/pubmed/vp-file-2"
+      ],
+      "contexts": [
+        {
+          "id": "core-classification-1-1",
+          "doc": "http://www.ncbi.nlm.nih.gov/pubmed/core-classification-1",
+          "text": "Classification (part 1). Classification\n\nClassification\n\n.. index:: classification\n.. index::\n single: data mining; supervised\n\nMuch of Orange is devoted to machine learning methods for classification, or supervised data mining. These methods rely on data with class-labeled instances, like that of senate voting. Here is a code that loads this dataset, displays the first data instance and shows its predicted class (``republican``)::"
+        },
+        {
+          "id": "vp-pythonscript-3-1",
+          "doc": "http://www.ncbi.nlm.nih.gov/pubmed/vp-pythonscript-3",
+          "text": "Python Script (part 3). Python Script\n\nExamples\n\nPython Script widget is intended to extend functionalities for advanced users. Classes from Orange library are described in the documentation. To find further information about the `Orange.data` classes see Table, Domain, and Variable documentation.\n\nDocumentation and additional scripts are available in the orange-scripts repository.\n\n### Batch filtering\n\nOne can, for example, do batch filtering by attributes. We used zoo.tab for the example and we filtered out all the attributes that have more than 5 discrete values. This in our case removed only 'leg' attribute, but imagine an example where one would have many such attributes."
+        },
+        {
+          "id": "vp-tree-1-1",
+          "doc": "http://www.ncbi.nlm.nih.gov/pubmed/vp-tree-1",
+          "text": "Tree (part 1). Tree\n\nTree\n\nA tree algorithm with forward pruning.\n\nInputs\n\n- Data: input dataset\n- Preprocessor: preprocessing method(s)\n\nOutputs\n\n- Learner: decision tree learning algorithm\n- Model: trained model\n\nTree is a simple algorithm that splits the data into nodes by class purity (information gain for categorical and MSE for numeric target variable). It is a precursor to Random Forest. Tree in Orange is designed in-house and can handle both categorical and numeric datasets."
+        },
+        {
+          "id": "vp-confusionmatrix-1-1",
+          "doc": "http://www.ncbi.nlm.nih.gov/pubmed/vp-confusionmatrix-1",
+          "text": "Confusion Matrix (part 1). Confusion Matrix\n\nConfusion Matrix Shows proportions between the predicted and actual class. Inputs - Evaluation results: results of testing classification algorithms Outputs - Selected Data: data subset selected from confusion matrix - Data: data with the additional information on whether a data instance was selected The Confusion Matrix gives the number/proportion of instances between the predicted and actual class. Each row corresponds to a correct class, while columns represent the predicted classes. The rightmost column gives the number of instances from each class and the bottom row gives the number of instances classified into each class. The selection of the elements in the matrix feeds the corresponding instances into the output signal. This way, one can observe which specific instances were misclassified and how. The widget usually gets the evaluation results from Test and Score; an example of the schema is shown below. 1. Learners: Choose a learning algorithm to display. 2. Output: define what is sent to the output, namely predicted classes (Predictions) or their probabilities (Probabilities). 3. The widget outputs every change if Send Automatically is ticked. If not, the user will need to click Send Selected to commit the changes. 4. Show: select what data to see in the matrix. - Number of instances shows correctly and incorrectly classified instances numerically. - Proportions of predicted shows how many instances classified as, say, Iris-versicolor are in which true class; in the table we can read the 0% of them are actually setosae, 95.9% of those classified as versicolor are versicolors, and 4.1% are virginicae. - Proportions of actual shows the opposite relation: of all true versicolors, 94% were classified as versicolors and 6% as virginicae. - Sum of probabilities sums the probabilities for each class. For example, there are 50 iris-setosas. This option sums probabilities for all actual versicolors to"
+        },
+        {
+          "id": "vp-file-2-1",
+          "doc": "http://www.ncbi.nlm.nih.gov/pubmed/vp-file-2",
+          "text": "File (part 2). File\n\nExample\n\nMost Orange workflows would probably start with the File widget. In the schema below, the widget is used to read the data that is sent to both the Data Table and the Box Plot widget.\n\n### Loading your data\n\n- Orange can import any comma, .xlsx or tab-delimited data file or URL. Use the File widget and then, if needed, select class and meta attributes.\n- To specify the domain and the type of the attribute, attribute names can be preceded with a label followed by a hash. Use c for class and m for meta attribute, i to ignore a column, and C, D, S for continuous, discrete and string attribute types. Examples: C#mpg, mS#name, i#dummy.\n- Orange's native format is a tab-delimited text file with three header rows. The first row contains attribute names, the second the type (continuous, discrete or string), and the third the optional element (class, meta or time)."
+        }
+      ]
+    },
+    {
+      "id": "orange_qa_MCQ_test_3",
+      "body": "Answer the following question based on your knowledge of the Orange Data Mining software.\nMake sure you answer the question with a single letter corresponding to the correct answer.\n\nQuestion: Can you select features in Column Statistics to output a reduced dataset?\n\nAnswers:\nA: Only numeric features.\nB: Yes.\nC: Only categorical features.\nD: No.",
+      "type": "MCQ",
+      "documents": [
+        "http://www.ncbi.nlm.nih.gov/pubmed/core-data-1",
+        "http://www.ncbi.nlm.nih.gov/pubmed/core-classification-1",
+        "http://www.ncbi.nlm.nih.gov/pubmed/core-distances-1",
+        "http://www.ncbi.nlm.nih.gov/pubmed/core-data-7",
+        "http://www.ncbi.nlm.nih.gov/pubmed/vp-split"
+      ],
+      "contexts": [
+        {
+          "id": "core-data-1-1",
+          "doc": "http://www.ncbi.nlm.nih.gov/pubmed/core-data-1",
+          "text": "The Data (part 1). The Data\n\nThe Data\n\n.. index: data\n\nThis section describes how to load the data in Orange. We also show how to explore the data, perform some basic statistics, and how to sample the data.\n\nData Input\n\n.. index::\n single: data; input\n\nOrange can read files in proprietary tab-delimited format, or can load data from any of the major standard spreadsheet file types, like CSV and Excel. Native format starts with a header row with feature (column) names. The second header row gives the attribute type, which can be numeric, categorical, time, or string. The third header line contains meta information to identify dependent features (class), irrelevant features (ignore) or meta features (meta).\nMore detailed specification is available in :doc:`../reference/data.io`.\nHere are the first few lines from a dataset :download:`lenses.tab <code/lenses.tab>`::"
+        },
+        {
+          "id": "core-classification-1-1",
+          "doc": "http://www.ncbi.nlm.nih.gov/pubmed/core-classification-1",
+          "text": "Classification (part 1). Classification\n\nClassification\n\n.. index:: classification\n.. index::\n single: data mining; supervised\n\nMuch of Orange is devoted to machine learning methods for classification, or supervised data mining. These methods rely on data with class-labeled instances, like that of senate voting. Here is a code that loads this dataset, displays the first data instance and shows its predicted class (``republican``)::"
+        },
+        {
+          "id": "vp-split-1",
+          "doc": "http://www.ncbi.nlm.nih.gov/pubmed/vp-split",
+          "text": "Split. Split\n\nSplit\n\nSplit text or categorical variables into indicator variables.\n\nInputs\n\n- Data: data table\n\nOutputs\n\n- Data: data table with added columns\n\nThe widget splits the chosen text or categorical variable into separate variables. The newly-created variables can be categorical (Yes or No) or numeric (0 or 1) indicators, or appearance counts. The widget is typically used with survey data.\n\n1. Select the variable to split. Define the delimiter.\n2. Set the type of output variables. Categorical produces categorical indicator with values Yes and No, Numerical produces a dummy numerical variable with values 0 and 1, while Counts creates a variable that contains the number of appearances of each term. The latter two options are equivalent if each value can appear only once.\n3. If Apply Automatically is ticked, changes are communicated automatically. Alternatively, press Apply.\n\nExample\n\nThe workflow uses data from the Orange survey taken in 2020. The survey was done in Google Forms, which joins responses for multiple choice questions.\n\nTo use this data in the analysis, we have to split on a delimiter, a semicolon in this case. We do this using Split. We pass the data from the File widget to Split and set the parameters.\n\nSay, we wish to observe and count the reasons users like Orange. We split on Reason and set the delimiter to semicolon. The output will be an array of categorical variables. We can observe the results in a Data Table.\n\nThe advantage of Split is that now, we can count each response individually. Say, we observe how the responses differ on the position of the respondent in Box Plot. It seems the professors especially appreciate Orange for its visual programming approach."
+        }
+      ]
+    },
+    {
+      "id": "orange_qa_MCQ_test_4",
+      "body": "Answer the following question based on your knowledge of the Orange Data Mining software.\nMake sure you answer the question with a single letter corresponding to the correct answer.\n\nQuestion: What is the input 'Base Learner' in the Calibrated Learner widget?\n\nAnswers:\nA: The dataset to learn from.\nB: The calibration method.\nC: The evaluation results.\nD: The learner to calibrate.",
+      "type": "MCQ",
+      "documents": [
+        "http://www.ncbi.nlm.nih.gov/pubmed/core-classification-1",
+        "http://www.ncbi.nlm.nih.gov/pubmed/core-classification-4",
+        "http://www.ncbi.nlm.nih.gov/pubmed/vp-impute-1",
+        "http://www.ncbi.nlm.nih.gov/pubmed/core-classification-3",
+        "http://www.ncbi.nlm.nih.gov/pubmed/vp-pythonscript-1"
+      ],
+      "contexts": [
+        {
+          "id": "core-classification-1-1",
+          "doc": "http://www.ncbi.nlm.nih.gov/pubmed/core-classification-1",
+          "text": "Classification (part 1). Classification\n\nClassification\n\n.. index:: classification\n.. index::\n single: data mining; supervised\n\nMuch of Orange is devoted to machine learning methods for classification, or supervised data mining. These methods rely on data with class-labeled instances, like that of senate voting. Here is a code that loads this dataset, displays the first data instance and shows its predicted class (``republican``)::"
+        },
+        {
+          "id": "core-classification-4-1",
+          "doc": "http://www.ncbi.nlm.nih.gov/pubmed/core-classification-4",
+          "text": "Classification (part 4). Classification\n\n>>> import Orange\n >>> data = Orange.data.Table(\"voting\")\n >>> learner = Orange.classification.LogisticRegressionLearner()\n >>> classifier = learner(data)\n >>> classifier(data[:3])\n array([ 0., 0., 1.])\n\nAbove, we read the data, constructed a logistic regression learner, gave it the dataset to construct a classifier, and used it to predict the class of the first three data instances. We also use these concepts in the following code that predicts the classes of the selected three instances in the dataset:"
+        },
+        {
+          "id": "vp-impute-1-1",
+          "doc": "http://www.ncbi.nlm.nih.gov/pubmed/vp-impute-1",
+          "text": "Impute (part 1). Impute\n\nImpute Replaces unknown values in the data. Inputs - Data: input dataset - Learner: learning algorithm for imputation Outputs - Data: dataset with imputed values Some Orange's algorithms and visualizations cannot handle unknown values in the data. This widget does what statisticians call imputation: it substitutes missing values by values either computed from the data or set by the user. The default imputation is mean. 1. In the Default method box, the user can specify a general imputation technique for all attributes. - Don't Impute does nothing with the missing values. - Average/Most-frequent uses the average (for continuous attributes) or the most common value (for discrete attributes). - As a distinct value creates new features defining whether an instance had missing values for the unimputed feature. - Model-based imputer constructs a simple tree model for predicting the missing value, based on values of other attributes; a separate model is constructed for each attribute. The default model is 1-NN learner, which takes the value from the most similar example (this is sometimes referred to as hot deck imputation). This algorithm can be substituted by one that the user connects to the input signal Learner. Note, however, that if there are discrete and continuous attributes in the data, the algorithm needs to be capable of handling them both; at the moment only 1-NN learner can do that. (In the future, when Orange has more regressors, the Impute widget may have separate input signals for discrete and continuous models.) - Random values computes the distributions of values for each attribute and then imputes by picking random values from them. - Remove instances with unknown values removes the example containing missing values. This check also applies to the class attribute if Impute class values is checked. - Fixed values assigns the values provided by"
+        },
+        {
+          "id": "core-classification-3-1",
+          "doc": "http://www.ncbi.nlm.nih.gov/pubmed/core-classification-3",
+          "text": "Classification (part 3). Classification\n\nIt turns out that for this domain logistic regression does well::\n\nAccuracy: [ 0.96321839 0.95632184]\n AUC: [ 0.96233796 0.95671252]\n\nFor supervised learning, Orange uses learners. These are objects that receive the data and return classifiers. Learners are passed to evaluation routines, such as cross-validation above.\n\nLearners and Classifiers\n\n.. index::\n single: classification; learner\n.. index::\n single: classification; classifier\n.. index::\n single: classification; logistic regression\n\nClassification uses two types of objects: learners and classifiers. Learners consider class-labeled data and return a classifier. Given the first three data instances, classifiers return the indexes of predicted class::"
+        },
+        {
+          "id": "vp-pythonscript-1-1",
+          "doc": "http://www.ncbi.nlm.nih.gov/pubmed/vp-pythonscript-1",
+          "text": "Python Script (part 1). Python Script\n\nPython Script\n\nExtends functionalities through Python scripting.\n\nInputs\n\n- Data (Orange.data.Table): input dataset bound to ``in_data`` variable\n- Learner (Orange.classification.Learner): input learner bound to ``in_learner`` variable\n- Classifier (Orange.classification.Learner): input classifier bound to ``in_classifier`` variable\n- Object: input Python object bound to ``in_object`` variable\n\nOutputs\n\n- Data (Orange.data.Table): dataset retrieved from ``out_data`` variable\n- Learner (Orange.classification.Learner): learner retrieved from ``out_learner`` variable\n- Classifier (Orange.classification.Learner): classifier retrieved from ``out_classifier`` variable\n- Object: Python object retrieved from ``out_object`` variable\n\nPython Script widget run a python scripts in the input, when a suitable functionality is not implemented in an existing widget. The script has ``in_data``, ``in_distance``, ``in_learner``, ``in_classifier`` and ``in_object`` variables (from input signals) in its local namespace. If a signal is not connected or it did not yet receive any data, those variables contain ``None``.\n\nAfter the script is executed, variables from the script's local namespace are extracted and used as outputs of the widget. The widget can be further connected to other widgets for visualizing the output."
+        }
+      ]
+    },
+    {
+      "id": "orange_qa_MCQ_test_5",
+      "body": "Answer the following question based on your knowledge of the Orange Data Mining software.\nMake sure you answer the question with a single letter corresponding to the correct answer.\n\nQuestion: Which variable holds the input dataset in the Python Script widget?\n\nAnswers:\nA: data\nB: in_data\nC: dataset\nD: input_data",
+      "type": "MCQ",
+      "documents": [
+        "http://www.ncbi.nlm.nih.gov/pubmed/vp-pythonscript-6",
+        "http://www.ncbi.nlm.nih.gov/pubmed/core-classification-1",
+        "http://www.ncbi.nlm.nih.gov/pubmed/vp-pythonscript-3",
+        "http://www.ncbi.nlm.nih.gov/pubmed/vp-pythonscript-1",
+        "http://www.ncbi.nlm.nih.gov/pubmed/vp-index"
+      ],
+      "contexts": [
+        {
+          "id": "vp-pythonscript-6-1",
+          "doc": "http://www.ncbi.nlm.nih.gov/pubmed/vp-pythonscript-6",
+          "text": "Python Script (part 6). Python Script\n\nimport random\n from Orange.data import Domain, Table\n new_data = in_data.copy()\n for inst in new_data:\n for f in inst.domain.attributes:\n inst[f] += random.gauss(0, 0.02)\n out_data = new_data\n\n### Custom text preprocessing\n\nThe final example uses Orange3-Text add-on. Python Script is very useful for custom preprocessing in text mining, extracting new features from strings, or utilizing advanced nltk or gensim functions. Below, we tokenized our input data from deerwester.tab by splitting them by whitespace."
+        },
+        {
+          "id": "core-classification-1-1",
+          "doc": "http://www.ncbi.nlm.nih.gov/pubmed/core-classification-1",
+          "text": "Classification (part 1). Classification\n\nClassification\n\n.. index:: classification\n.. index::\n single: data mining; supervised\n\nMuch of Orange is devoted to machine learning methods for classification, or supervised data mining. These methods rely on data with class-labeled instances, like that of senate voting. Here is a code that loads this dataset, displays the first data instance and shows its predicted class (``republican``)::"
+        },
+        {
+          "id": "vp-pythonscript-3-1",
+          "doc": "http://www.ncbi.nlm.nih.gov/pubmed/vp-pythonscript-3",
+          "text": "Python Script (part 3). Python Script\n\nExamples\n\nPython Script widget is intended to extend functionalities for advanced users. Classes from Orange library are described in the documentation. To find further information about the `Orange.data` classes see Table, Domain, and Variable documentation.\n\nDocumentation and additional scripts are available in the orange-scripts repository.\n\n### Batch filtering\n\nOne can, for example, do batch filtering by attributes. We used zoo.tab for the example and we filtered out all the attributes that have more than 5 discrete values. This in our case removed only 'leg' attribute, but imagine an example where one would have many such attributes."
+        },
+        {
+          "id": "vp-pythonscript-1-1",
+          "doc": "http://www.ncbi.nlm.nih.gov/pubmed/vp-pythonscript-1",
+          "text": "Python Script (part 1). Python Script\n\nPython Script\n\nExtends functionalities through Python scripting.\n\nInputs\n\n- Data (Orange.data.Table): input dataset bound to ``in_data`` variable\n- Learner (Orange.classification.Learner): input learner bound to ``in_learner`` variable\n- Classifier (Orange.classification.Learner): input classifier bound to ``in_classifier`` variable\n- Object: input Python object bound to ``in_object`` variable\n\nOutputs\n\n- Data (Orange.data.Table): dataset retrieved from ``out_data`` variable\n- Learner (Orange.classification.Learner): learner retrieved from ``out_learner`` variable\n- Classifier (Orange.classification.Learner): classifier retrieved from ``out_classifier`` variable\n- Object: Python object retrieved from ``out_object`` variable\n\nPython Script widget run a python scripts in the input, when a suitable functionality is not implemented in an existing widget. The script has ``in_data``, ``in_distance``, ``in_learner``, ``in_classifier`` and ``in_object`` variables (from input signals) in its local namespace. If a signal is not connected or it did not yet receive any data, those variables contain ``None``.\n\nAfter the script is executed, variables from the script's local namespace are extracted and used as outputs of the widget. The widget can be further connected to other widgets for visualizing the output."
+        },
+        {
+          "id": "vp-index-1",
+          "doc": "http://www.ncbi.nlm.nih.gov/pubmed/vp-index",
+          "text": "Report. Report\n\n# Report\n\nIt is possible to compile a report in Orange. We can save the report in .html, .pdf or .report format. Reports allow us to trace back analytical steps as it saves the workflow at which each report segment was created.\n\nEach widget has a report button in the status bar at the bottom. Pressing on the the File icon adds a new section to the report.\n\nReport can be examined with View - Show report.\n\n## Simple example\n\nWe built a simple workflow with File and Scatter Plot, adding a section to the report at each step. Widgets report parameters, visualizations, and other settings. Each section includes a comment for extra explanation.\n\nTo remove a report section, hover on the section in the list on the left. A Trash and an Orange icon will appear. The trash icon removes the section from the report list. Orange icon loads the workflow as it was at the time of creating the section. This is very handy if a colleague wishes to inspect the results. This option is available only if the report is saved in .report format."
+        }
+      ]
+    },
+    {
+      "id": "orange_qa_MCQ_test_6",
+      "body": "Answer the following question based on your knowledge of the Orange Data Mining software.\nMake sure you answer the question with a single letter corresponding to the correct answer.\n\nQuestion: What happens if rows cannot be matched in 'Concatenate tables' (outer join)?\n\nAnswers:\nA: Missing values will appear.\nB: They are removed.\nC: The widget errors out.\nD: They are duplicated.",
+      "type": "MCQ",
+      "documents": [
+        "http://www.ncbi.nlm.nih.gov/pubmed/core-distances-1",
+        "http://www.ncbi.nlm.nih.gov/pubmed/core-classification-1",
+        "http://www.ncbi.nlm.nih.gov/pubmed/vp-mergedata-5",
+        "http://www.ncbi.nlm.nih.gov/pubmed/vp-impute-1",
+        "http://www.ncbi.nlm.nih.gov/pubmed/vp-distances-2"
+      ],
+      "contexts": [
+        {
+          "id": "core-classification-1-1",
+          "doc": "http://www.ncbi.nlm.nih.gov/pubmed/core-classification-1",
+          "text": "Classification (part 1). Classification\n\nClassification\n\n.. index:: classification\n.. index::\n single: data mining; supervised\n\nMuch of Orange is devoted to machine learning methods for classification, or supervised data mining. These methods rely on data with class-labeled instances, like that of senate voting. Here is a code that loads this dataset, displays the first data instance and shows its predicted class (``republican``)::"
+        },
+        {
+          "id": "vp-mergedata-5-1",
+          "doc": "http://www.ncbi.nlm.nih.gov/pubmed/vp-mergedata-5",
+          "text": "Merge Data (part 5). Merge Data\n\n### Row index\n\nData will be merged in the same order as they appear in the table. Row number 1 from the Data input will be joined with row number 1 from the Extra Data input. Row numbers are assigned by Orange based on the original order of the data instances."
+        },
+        {
+          "id": "vp-impute-1-1",
+          "doc": "http://www.ncbi.nlm.nih.gov/pubmed/vp-impute-1",
+          "text": "Impute (part 1). Impute\n\nImpute Replaces unknown values in the data. Inputs - Data: input dataset - Learner: learning algorithm for imputation Outputs - Data: dataset with imputed values Some Orange's algorithms and visualizations cannot handle unknown values in the data. This widget does what statisticians call imputation: it substitutes missing values by values either computed from the data or set by the user. The default imputation is mean. 1. In the Default method box, the user can specify a general imputation technique for all attributes. - Don't Impute does nothing with the missing values. - Average/Most-frequent uses the average (for continuous attributes) or the most common value (for discrete attributes). - As a distinct value creates new features defining whether an instance had missing values for the unimputed feature. - Model-based imputer constructs a simple tree model for predicting the missing value, based on values of other attributes; a separate model is constructed for each attribute. The default model is 1-NN learner, which takes the value from the most similar example (this is sometimes referred to as hot deck imputation). This algorithm can be substituted by one that the user connects to the input signal Learner. Note, however, that if there are discrete and continuous attributes in the data, the algorithm needs to be capable of handling them both; at the moment only 1-NN learner can do that. (In the future, when Orange has more regressors, the Impute widget may have separate input signals for discrete and continuous models.) - Random values computes the distributions of values for each attribute and then imputes by picking random values from them. - Remove instances with unknown values removes the example containing missing values. This check also applies to the class attribute if Impute class values is checked. - Fixed values assigns the values provided by"
+        },
+        {
+          "id": "vp-distances-2-1",
+          "doc": "http://www.ncbi.nlm.nih.gov/pubmed/vp-distances-2",
+          "text": "Distances (part 2). Distances\n\nSparse data can only be used with Euclidean, Manhattan and Cosine metric. The resulting distance matrix can be fed further to Hierarchical Clustering for uncovering groups in the data, to Distance Map or Distance Matrix for visualizing the distances (Distance Matrix can be quite slow for larger data sets), to MDS for mapping the data instances using the distance matrix and finally, saved with Save Distance Matrix. Distance file can be loaded with Distance File. Distances work well with Orange add-ons, too. The distance matrix can be fed to Network from Distances (Network add-on) to convert the matrix into a graph and to Duplicate Detection (Text add-on) to find duplicate documents in the corpus. 1. Choose whether to measure distances between rows or columns. 2. Choose the Distance Metric: - Euclidean (normalized) (\"straight line\", distance between two points). Normalization is always done column-wise. Values are zero centered and scaled. - Euclidean (\"straight line\", distance between two points) - Manhattan (normalized) (the sum of absolute differences for all attributes) - Manhattan (the sum of absolute differences for all attributes). Normalization is always done column-wise. Values are zero centered and scaled. - Mahalanobis (distance between a point and a probability distribution) - Hamming (the number of features at which the corresponding values are different) - Cosine (the cosine of the angle between two vectors of an inner product space). Orange computes the cosine distance, which is 1-similarity. - Pearson (linear correlation between the values, remapped as a distance in a [0, 1] interval) - Pearson absolute (linear correlation between the absolute values, remapped as a distance in a [0, 1] interval) - Spearman(linear correlation between the rank of the values, remapped as a distance in a [0, 1] interval) - Spearman absolute(linear correlation between the rank of the absolute values, remapped as"
+        }
+      ]
+    },
+    {
+      "id": "orange_qa_MCQ_test_7",
+      "body": "Answer the following question based on your knowledge of the Orange Data Mining software.\nMake sure you answer the question with a single letter corresponding to the correct answer.\n\nQuestion: What is the default number of topics for LSI and LDA in the widget?\n\nAnswers:\nA: 50\nB: 5\nC: 20\nD: 10",
+      "type": "MCQ",
+      "documents": [
+        "http://www.ncbi.nlm.nih.gov/pubmed/core-classification-1",
+        "http://www.ncbi.nlm.nih.gov/pubmed/vp-mergedata-5",
+        "http://www.ncbi.nlm.nih.gov/pubmed/vp-index-8",
+        "http://www.ncbi.nlm.nih.gov/pubmed/vp-file-2",
+        "http://www.ncbi.nlm.nih.gov/pubmed/vp-index-10"
+      ],
+      "contexts": [
+        {
+          "id": "core-classification-1-1",
+          "doc": "http://www.ncbi.nlm.nih.gov/pubmed/core-classification-1",
+          "text": "Classification (part 1). Classification\n\nClassification\n\n.. index:: classification\n.. index::\n single: data mining; supervised\n\nMuch of Orange is devoted to machine learning methods for classification, or supervised data mining. These methods rely on data with class-labeled instances, like that of senate voting. Here is a code that loads this dataset, displays the first data instance and shows its predicted class (``republican``)::"
+        },
+        {
+          "id": "vp-mergedata-5-1",
+          "doc": "http://www.ncbi.nlm.nih.gov/pubmed/vp-mergedata-5",
+          "text": "Merge Data (part 5). Merge Data\n\n### Row index\n\nData will be merged in the same order as they appear in the table. Row number 1 from the Data input will be joined with row number 1 from the Extra Data input. Row numbers are assigned by Orange based on the original order of the data instances."
+        },
+        {
+          "id": "vp-index-8-1",
+          "doc": "http://www.ncbi.nlm.nih.gov/pubmed/vp-index-8",
+          "text": "Loading your Data (part 8). Loading your Data\n\n## Three-Row Header Format\n\nOrange's legacy native data format is a tab-delimited text file with three header rows. The first row lists the attribute names, the second row defines their type (continuous, discrete, time and string, or abbreviated c, d, t, and s), and the third row an optional role (class, meta, weight, or ignore). Here is an example:"
+        },
+        {
+          "id": "vp-file-2-1",
+          "doc": "http://www.ncbi.nlm.nih.gov/pubmed/vp-file-2",
+          "text": "File (part 2). File\n\nExample\n\nMost Orange workflows would probably start with the File widget. In the schema below, the widget is used to read the data that is sent to both the Data Table and the Box Plot widget.\n\n### Loading your data\n\n- Orange can import any comma, .xlsx or tab-delimited data file or URL. Use the File widget and then, if needed, select class and meta attributes.\n- To specify the domain and the type of the attribute, attribute names can be preceded with a label followed by a hash. Use c for class and m for meta attribute, i to ignore a column, and C, D, S for continuous, discrete and string attribute types. Examples: C#mpg, mS#name, i#dummy.\n- Orange's native format is a tab-delimited text file with three header rows. The first row contains attribute names, the second the type (continuous, discrete or string), and the third the optional element (class, meta or time)."
+        },
+        {
+          "id": "vp-index-10-1",
+          "doc": "http://www.ncbi.nlm.nih.gov/pubmed/vp-index-10",
+          "text": "Loading your Data (part 10). Loading your Data\n\n## Data from LibreOffice\n\nIf you are using LibreOffice, simply save your files in Excel (.xlsx) format (available from the drop-down menu under Save As Type).\n\n## Datetime Format\n\nTo avoid ambiguity, Orange supports date and/or time formatted in one of the ISO 8601 formats. For example, the following values are all valid:"
+        }
+      ]
+    },
+    {
+      "id": "orange_qa_MCQ_test_8",
+      "body": "Answer the following question based on your knowledge of the Orange Data Mining software.\nMake sure you answer the question with a single letter corresponding to the correct answer.\n\nQuestion: Which button brings up a detailed description of the rule induction algorithm in CN2 Rule Viewer?\n\nAnswers:\nA: Help\nB: Report\nC: Details\nD: Info",
+      "type": "MCQ",
+      "documents": [
+        "http://www.ncbi.nlm.nih.gov/pubmed/core-classification-1",
+        "http://www.ncbi.nlm.nih.gov/pubmed/core-data-1",
+        "http://www.ncbi.nlm.nih.gov/pubmed/vp-index",
+        "http://www.ncbi.nlm.nih.gov/pubmed/core-classification-2",
+        "http://www.ncbi.nlm.nih.gov/pubmed/core-distances-1"
+      ],
+      "contexts": [
+        {
+          "id": "core-classification-1-1",
+          "doc": "http://www.ncbi.nlm.nih.gov/pubmed/core-classification-1",
+          "text": "Classification (part 1). Classification\n\nClassification\n\n.. index:: classification\n.. index::\n single: data mining; supervised\n\nMuch of Orange is devoted to machine learning methods for classification, or supervised data mining. These methods rely on data with class-labeled instances, like that of senate voting. Here is a code that loads this dataset, displays the first data instance and shows its predicted class (``republican``)::"
+        },
+        {
+          "id": "core-data-1-1",
+          "doc": "http://www.ncbi.nlm.nih.gov/pubmed/core-data-1",
+          "text": "The Data (part 1). The Data\n\nThe Data\n\n.. index: data\n\nThis section describes how to load the data in Orange. We also show how to explore the data, perform some basic statistics, and how to sample the data.\n\nData Input\n\n.. index::\n single: data; input\n\nOrange can read files in proprietary tab-delimited format, or can load data from any of the major standard spreadsheet file types, like CSV and Excel. Native format starts with a header row with feature (column) names. The second header row gives the attribute type, which can be numeric, categorical, time, or string. The third header line contains meta information to identify dependent features (class), irrelevant features (ignore) or meta features (meta).\nMore detailed specification is available in :doc:`../reference/data.io`.\nHere are the first few lines from a dataset :download:`lenses.tab <code/lenses.tab>`::"
+        },
+        {
+          "id": "vp-index-1",
+          "doc": "http://www.ncbi.nlm.nih.gov/pubmed/vp-index",
+          "text": "Report. Report\n\n# Report\n\nIt is possible to compile a report in Orange. We can save the report in .html, .pdf or .report format. Reports allow us to trace back analytical steps as it saves the workflow at which each report segment was created.\n\nEach widget has a report button in the status bar at the bottom. Pressing on the the File icon adds a new section to the report.\n\nReport can be examined with View - Show report.\n\n## Simple example\n\nWe built a simple workflow with File and Scatter Plot, adding a section to the report at each step. Widgets report parameters, visualizations, and other settings. Each section includes a comment for extra explanation.\n\nTo remove a report section, hover on the section in the list on the left. A Trash and an Orange icon will appear. The trash icon removes the section from the report list. Orange icon loads the workflow as it was at the time of creating the section. This is very handy if a colleague wishes to inspect the results. This option is available only if the report is saved in .report format."
+        },
+        {
+          "id": "core-classification-2-1",
+          "doc": "http://www.ncbi.nlm.nih.gov/pubmed/core-classification-2",
+          "text": "Classification (part 2). Classification\n\n>>> import Orange\n >>> data = Orange.data.Table(\"voting\")\n >>> data[0]\n [n, y, n, y, y, ... | republican]\n\nOrange implements functions for construction of classification models, their evaluation and scoring. In a nutshell, here is the code that reports on cross-validated accuracy and AUC for logistic regression and random forests:\n\n.. literalinclude:: code/classification-cv3.py"
+        }
+      ]
+    },
+    {
+      "id": "orange_qa_MCQ_test_9",
+      "body": "Answer the following question based on your knowledge of the Orange Data Mining software.\nMake sure you answer the question with a single letter corresponding to the correct answer.\n\nQuestion: What is the default loss function for regression in the SGD widget?\n\nAnswers:\nA: Squared Loss\nB: Hinge\nC: Huber\nD: Epsilon insensitive",
+      "type": "MCQ",
+      "documents": [
+        "http://www.ncbi.nlm.nih.gov/pubmed/core-classification-1",
+        "http://www.ncbi.nlm.nih.gov/pubmed/core-classification-3",
+        "http://www.ncbi.nlm.nih.gov/pubmed/core-classification-2",
+        "http://www.ncbi.nlm.nih.gov/pubmed/core-data-13",
+        "http://www.ncbi.nlm.nih.gov/pubmed/vp-stochasticgradient-1"
+      ],
+      "contexts": [
+        {
+          "id": "core-classification-1-1",
+          "doc": "http://www.ncbi.nlm.nih.gov/pubmed/core-classification-1",
+          "text": "Classification (part 1). Classification\n\nClassification\n\n.. index:: classification\n.. index::\n single: data mining; supervised\n\nMuch of Orange is devoted to machine learning methods for classification, or supervised data mining. These methods rely on data with class-labeled instances, like that of senate voting. Here is a code that loads this dataset, displays the first data instance and shows its predicted class (``republican``)::"
+        },
+        {
+          "id": "core-classification-3-1",
+          "doc": "http://www.ncbi.nlm.nih.gov/pubmed/core-classification-3",
+          "text": "Classification (part 3). Classification\n\nIt turns out that for this domain logistic regression does well::\n\nAccuracy: [ 0.96321839 0.95632184]\n AUC: [ 0.96233796 0.95671252]\n\nFor supervised learning, Orange uses learners. These are objects that receive the data and return classifiers. Learners are passed to evaluation routines, such as cross-validation above.\n\nLearners and Classifiers\n\n.. index::\n single: classification; learner\n.. index::\n single: classification; classifier\n.. index::\n single: classification; logistic regression\n\nClassification uses two types of objects: learners and classifiers. Learners consider class-labeled data and return a classifier. Given the first three data instances, classifiers return the indexes of predicted class::"
+        },
+        {
+          "id": "core-classification-2-1",
+          "doc": "http://www.ncbi.nlm.nih.gov/pubmed/core-classification-2",
+          "text": "Classification (part 2). Classification\n\n>>> import Orange\n >>> data = Orange.data.Table(\"voting\")\n >>> data[0]\n [n, y, n, y, y, ... | republican]\n\nOrange implements functions for construction of classification models, their evaluation and scoring. In a nutshell, here is the code that reports on cross-validated accuracy and AUC for logistic regression and random forests:\n\n.. literalinclude:: code/classification-cv3.py"
+        },
+        {
+          "id": "vp-stochasticgradient-1-1",
+          "doc": "http://www.ncbi.nlm.nih.gov/pubmed/vp-stochasticgradient-1",
+          "text": "Stochastic Gradient Descent (part 1). Stochastic Gradient Descent\n\nStochastic Gradient Descent Minimize an objective function using a stochastic approximation of gradient descent. Inputs - Data: input dataset - Preprocessor: preprocessing method(s) Outputs - Learner: stochastic gradient descent learning algorithm - Model: trained model The Stochastic Gradient Descent widget uses stochastic gradient descent that minimizes a chosen loss function with a linear function. The algorithm approximates a true gradient by considering one sample at a time, and simultaneously updates the model based on the gradient of the loss function. For regression, it returns predictors as minimizers of the sum, i.e. M-estimators, and is especially useful for large-scale and sparse datasets. 1. Specify the name of the model. The default name is \"Stochastic Gradient Descent\". 2. Loss function: - Classification: - Hinge (linear SVM), default. - Logistic Regression (logistic regression SGD) - Modified Huber (smooth loss that brings tolerance to outliers as well as probability estimates) - Squared Hinge (quadratically penalized hinge) - Perceptron (linear loss used by the perceptron algorithm) - Squared Loss (fitted to ordinary least-squares) - Huber (switches to linear loss beyond ε) - Epsilon insensitive (ignores errors within ε, linear beyond it) - Squared epsilon insensitive (loss is squared beyond ε-region). - Regression: - Squared Loss (fitted to ordinary least-squares), deafult. - Huber (switches to linear loss beyond ε) - Epsilon insensitive (ignores errors within ε, linear beyond it) - Squared epsilon insensitive (loss is squared beyond ε-region). 3. Regularization norms to prevent overfitting: - None. - Lasso (L1) (L1 leading to sparse solutions) - Ridge (L2)#p-norm) (L2, standard regularizer), default. - Elastic net (mixing both penalty norms). Regularization strength defines how much regularization will be applied (the less we regularize, the more we allow the model to fit the data) and the mixing parameter what the ratio between L1 and L2 loss will be (if"
+        }
+      ]
+    },
+    {
+      "id": "orange_qa_MCQ_test_10",
+      "body": "Answer the following question based on your knowledge of the Orange Data Mining software.\nMake sure you answer the question with a single letter corresponding to the correct answer.\n\nQuestion: What are the two node types available in Corpus to Network?\n\nAnswers:\nA: Documents and Authors.\nB: Words and Sentences.\nC: Topics and Documents.\nD: Documents and Words (ngrams).",
+      "type": "MCQ",
+      "documents": [
+        "http://www.ncbi.nlm.nih.gov/pubmed/text-ldavis-2",
+        "http://www.ncbi.nlm.nih.gov/pubmed/text-corpustonetwork-2",
+        "http://www.ncbi.nlm.nih.gov/pubmed/text-twitter-widget-2",
+        "http://www.ncbi.nlm.nih.gov/pubmed/text-importdocuments",
+        "http://www.ncbi.nlm.nih.gov/pubmed/text-annotator-1"
+      ],
+      "contexts": [
+        {
+          "id": "text-ldavis-2-1",
+          "doc": "http://www.ncbi.nlm.nih.gov/pubmed/text-ldavis-2",
+          "text": "LDAvis (part 2). LDAvis\n\nExample\n\nWe show how to approximate the exact LDAvis in Orange. We are using book-excerpts.tab corpus in the example, which we load with Corpus, pass it to Preprocess Text, then to Bag of Words and finally to Topic Modelling, where we compute 10 topics with the LDA method.\n\nNext, we pass the All Topics output to LDAvis and to MDS. LDAvis shows the top ranked words for Topic 3, which seems to describe an industrial realm. One can adjust the Relevance slider to interactively explore word rankings.\n\nIn MDS, we have set the color and size of the point to Marginal Topic Probability and labelled the point with their topic names. This represent the left part of LDAvis visualization, namely the PCA-based MDS projection of topic similarity and their corresponding weights in the corpus. It seems that Topic 8 is the most frequent topic in the corpus.\n\nReferences\n\nSievert, Carson and Kenneth Shirley (2014). LDAvis: A method for visualizing and interpreting topics. In Proceedings of the Workshop on Interactive Language Learning, Visualization, and Interfaces. Available online."
+        },
+        {
+          "id": "text-corpustonetwork-2-1",
+          "doc": "http://www.ncbi.nlm.nih.gov/pubmed/text-corpustonetwork-2",
+          "text": "Corpus to Network (part 2). Corpus to Network\n\nExamples In first example, we will inspect how the widget works. Load book-excerpts.tab using Corpus widget and connect it to Corpus to Network. We see that the input contains 140 documents and the output is network with 140 nodes and 9730 edges. This is a complete graph, which is expected because the Threshold parameter is set to 1 (it is expected that each document shares at least 1 word). Change it a little to see how the number of edges changes. Let's now create a word co-occurrence network and visualize it. Load book-excerpts.tab using Corpus widget, connect it to Preprocess Text with default parameters and connect Preprocess Text to Corpus to Network. Set Node type to Word, Threshold to 10, Window size to 3 and Frequency Threshold to 200 and press Start. The output network now contains only words (ngrams) with frequency over 200. The edges between those words are created if the words co-occur in at least 10 windows of width 7 (2 Window size + 1). Connect Corpus to Network widget to Network Explorer, double click on a connection between them and connect Node data to Node data. Now open the Network Explorer* widget, set Label to word to annotate the nodes and Size to word_frequency to make node sizes correspond to their frequencies. We get a nice visualization of most frequent words in corpus and their connections. In Document Embedding widget, we saw how we can predict document category using it. Let's now try to improve the score even further by adding features obtained from network. We will keep working on book-excerpts.tab loaded with Corpus widget and sent through Preprocess Text with default parameters. Connect Preprocess Text to Document Embedding to obtain features for predictive modelling. Here we set aggregator to Sum. The first part was the"
+        },
+        {
+          "id": "text-twitter-widget-2-1",
+          "doc": "http://www.ncbi.nlm.nih.gov/pubmed/text-twitter-widget-2",
+          "text": "Twitter (part 2). Twitter\n\nExamples\n\nFirst, let's try a simple query. We will search for tweets containing either 'data mining' or 'machine learning' in the content and allow retweets. We will further limit our search to only a 100 tweets in English.\n\nFirst, we're checking the output in Corpus Viewer to get the initial idea about our results. Then we're preprocessing the tweets with lowercase, url removal, tweet tokenizer and removal of stopword and punctuation. The best way to see the results is with Word Cloud. This will display the most popular words in field of data mining and machine learning in the past two weeks.\n\nOur next example is a bit more complex. We're querying tweets from Hillary Clinton and Donald Trump from the presidential campaign 2016.\n\nThen we've used Preprocess Text to get suitable tokens on our output. We've connected Preprocess Text to Bag of Words in order to create a table with words as features and their counts as values. A quick check in Word Cloud gives us an idea about the results.\n\nNow we would like to predict the author of the tweet. With Select Columns we're setting 'Author' as our target variable. Then we connect Select Columns to Test & Score. We'll be using Logistic Regression as our learner, which we also connect to Test & Score.\n\nWe can observe the results of our author predictions directly in the widget. AUC score is quite ok. Seems like we can to some extent predict who is the author of the tweet based on the tweet content."
+        },
+        {
+          "id": "text-importdocuments-1",
+          "doc": "http://www.ncbi.nlm.nih.gov/pubmed/text-importdocuments",
+          "text": "Import Documents. Import Documents\n\nImport Documents\n\nImport text documents from folders.\n\nInputs\n\n- None\n\nOutputs\n\n- Corpus: A collection of documents from the local machine.\n- Skipped Documents: A list of documents that couldn't be imported.\n\nImport Documents widget retrieves text files from folders and creates a corpus. The widget reads .txt, .docx, .odt, .pdf, .xml, and .conllu files. If a folder contains subfolders, they will be used as class labels.\n\n1. Folder being loaded.\n2. Load folder from a local machine.\n3. Reload the data.\n4. Options for importing .conllu files.\n5. Number of documents retrieved.\n\nIf the widget cannot read the file for some reason, the file will be skipped. Files that were successfully retrieved will still be on the output.\n\nConllu files\n\nSince Text version 1.5.0, Orange supports reading .conllu files. Each file will be considered as a separate document in the corpus. If utterance IDs exist, utterances will become documents (each row in the corpus will be a single utterance).\n\nLemmas and POS tags from Conllu import options will be added as tokens and the corpus will be considered preprocessed. Named entities will be added as a comma-separated string (if they exist in the file).\n\nExample\n\nTo retrieve the data, select the folder icon on the right side of the widget. Select the folder you wish to turn into corpus. Once the loading is finished, you will see how many documents the widget retrieved. To inspect them, connect the widget to Corpus Viewer. We've used a set of Kennedy's speeches in a plain text format.\n\nNow let us try it with subfolders. We have placed Kennedy's speeches in two folders - pre-1962 and post-1962. If I load the parent folder, these two subfolders will be used as class labels. Check the output of the widget in a Data Table."
+        },
+        {
+          "id": "text-annotator-1-1",
+          "doc": "http://www.ncbi.nlm.nih.gov/pubmed/text-annotator-1",
+          "text": "Annotated Corpus Map (part 1). Annotated Corpus Map\n\nAnnotated Corpus Map\n\nAnnotated Corpus Map visualises, cluster, and annotates documents with keywords \nin two-dimensional projection.\n\nInputs\n\n- Corpus: A collection of documents to visualise.\n\nOutputs\n\n- Selected Document: Documents selected from the plot\n- Corpus: Data with an additional column showing whether a document is selected and information about the cluster the document belongs to\n- Scores: Table with scores and p-values for each keyword averaged per cluster\n\nThe Annotated Corpus Map widget provides a 2-dimensional scatter plot visualization \nof the document. The documents are displayed as a collection of points, each having \nthe value of the x-axis attribute determining the position on the horizontal axis \nand the value of the y-axis attribute determining the position on the vertical axis. \nWidget clusters documents according to annotation settings and assigns keywords to \neach cluster. Keywords are extracted with the TF-IDF method.\n\n1. Axis X and Axis Y let you select attributes you will show in the widget.\n We suggest using the t-SNE widget before Annotator and selecting `t-SNE-x` \n and `t-SNE-y` as x and y attributes.\n2. Annotation: Select the method to identify clusters:\n - DBSCAN clustering: \n Set epsilon, the maximum distance between two samples for one to be considered \n as in the neighbourhood of the other and those clustered together. Unchecking \n epsilon will instruct the widget to set epsilon automatically.\n - Gaussian mixture models: \n Select the number of desired clusters. Unchecking clusters will instruct the widget \n to set the numbers of clusters automatically.\n - From variable clusters documents according to a selected categorical variable."
+        }
+      ]
+    }
+  ]
+}

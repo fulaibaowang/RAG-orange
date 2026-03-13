@@ -1,0 +1,32 @@
+{
+  "bm25_runs_dir": "/Users/yun/develop/RAG-orange/output//bm25/runs",
+  "bm25_method": "BM25",
+  "bm25_topk": 80,
+  "dense_root": "/Users/yun/develop/RAG-orange/output//dense",
+  "train_json": "/Users/yun/develop/RAG-orange/data/train_test_dataset_bioasq_style/orange_qa_MCQ_test_bioasq_smallsubst.json",
+  "test_batch_jsons": [],
+  "out_dir": "/Users/yun/develop/RAG-orange/output//hybrid",
+  "mode": "default",
+  "k_rrf_list": "60,100",
+  "weights": "1.0,1.0;2.0,1.0;1.0,2.0",
+  "k_rrf": 60,
+  "w_bm25": 1.0,
+  "w_dense": 1.0,
+  "cap": 80,
+  "k_max_eval": 80,
+  "ks": "50,100,200,300,400,500,1000,2000,5000",
+  "p": 0.95,
+  "kb": null,
+  "kd": null,
+  "no_exclude_test_qids": false,
+  "no_eval": true,
+  "save_plots": false,
+  "no_plots": false,
+  "jobs": 4,
+  "ks_cap": [
+    50
+  ],
+  "ks_eval": [
+    50
+  ]
+}
