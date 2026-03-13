@@ -1,0 +1,19 @@
+{
+  "created_at": "2026-03-13T07:54:54.548674Z",
+  "jsonl_glob": "data/orange_docs_chunks.jsonl",
+  "model_name": "BAAI/bge-m3",
+  "device": "mps",
+  "max_seq_length": 512,
+  "include_mesh": false,
+  "normalize_embeddings": true,
+  "dim": 1024,
+  "dtype": "float32",
+  "dedup_pmids": true,
+  "max_docs": null,
+  "n_docs_indexed": 469,
+  "hnsw_space": "cosine",
+  "hnsw_M": 32,
+  "hnsw_ef_construction": 200,
+  "hnsw_ef_search": 100,
+  "batch_size": 8
+}

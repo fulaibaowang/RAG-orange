@@ -8,3 +8,8 @@ tqdm
 numpy
 wandb
 matplotlib
+pyterrier
+pyterrier[java]
+sentence_transformers
+hnswlib
+orjson

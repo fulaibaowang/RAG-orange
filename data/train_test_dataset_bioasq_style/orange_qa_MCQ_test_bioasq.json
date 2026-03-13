@@ -1,0 +1,1004 @@
+{
+  "questions": [
+    {
+      "id": "orange_qa_MCQ_test_0",
+      "body": "Can you save the image of the painted data in the Paint Data widget?",
+      "type": "factoid"
+    },
+    {
+      "id": "orange_qa_MCQ_test_1",
+      "body": "What must the input expression consist of in the Curve Fit widget?",
+      "type": "factoid"
+    },
+    {
+      "id": "orange_qa_MCQ_test_2",
+      "body": "What is the output of the CN2 Rule Viewer widget?",
+      "type": "factoid"
+    },
+    {
+      "id": "orange_qa_MCQ_test_3",
+      "body": "Can you select features in Column Statistics to output a reduced dataset?",
+      "type": "factoid"
+    },
+    {
+      "id": "orange_qa_MCQ_test_4",
+      "body": "What is the input 'Base Learner' in the Calibrated Learner widget?",
+      "type": "factoid"
+    },
+    {
+      "id": "orange_qa_MCQ_test_5",
+      "body": "Which variable holds the input dataset in the Python Script widget?",
+      "type": "factoid"
+    },
+    {
+      "id": "orange_qa_MCQ_test_6",
+      "body": "What happens if rows cannot be matched in 'Concatenate tables' (outer join)?",
+      "type": "factoid"
+    },
+    {
+      "id": "orange_qa_MCQ_test_7",
+      "body": "What is the default number of topics for LSI and LDA in the widget?",
+      "type": "factoid"
+    },
+    {
+      "id": "orange_qa_MCQ_test_8",
+      "body": "Which button brings up a detailed description of the rule induction algorithm in CN2 Rule Viewer?",
+      "type": "factoid"
+    },
+    {
+      "id": "orange_qa_MCQ_test_9",
+      "body": "What is the default loss function for regression in the SGD widget?",
+      "type": "factoid"
+    },
+    {
+      "id": "orange_qa_MCQ_test_10",
+      "body": "What are the two node types available in Corpus to Network?",
+      "type": "factoid"
+    },
+    {
+      "id": "orange_qa_MCQ_test_11",
+      "body": "What input does the Correlogram widget require?",
+      "type": "factoid"
+    },
+    {
+      "id": "orange_qa_MCQ_test_12",
+      "body": "What is the output of the Spatial Autocorrelation Scorer widget?",
+      "type": "factoid"
+    },
+    {
+      "id": "orange_qa_MCQ_test_13",
+      "body": "What outputs does the Corpus to Network widget provide?",
+      "type": "factoid"
+    },
+    {
+      "id": "orange_qa_MCQ_test_14",
+      "body": "Can you set the number of forecast steps in the VAR Model widget?",
+      "type": "factoid"
+    },
+    {
+      "id": "orange_qa_MCQ_test_15",
+      "body": "Can the Corpus widget transform input data into a corpus?",
+      "type": "factoid"
+    },
+    {
+      "id": "orange_qa_MCQ_test_16",
+      "body": "What is the output format of the Melt widget?",
+      "type": "factoid"
+    },
+    {
+      "id": "orange_qa_MCQ_test_17",
+      "body": "How do you view details about a marker gene in the Marker Genes widget?",
+      "type": "factoid"
+    },
+    {
+      "id": "orange_qa_MCQ_test_18",
+      "body": "Which Python library code can Orange export for detailed plot customization?",
+      "type": "factoid"
+    },
+    {
+      "id": "orange_qa_MCQ_test_19",
+      "body": "What is the source of the data in GEO Data Sets?",
+      "type": "factoid"
+    },
+    {
+      "id": "orange_qa_MCQ_test_20",
+      "body": "Which projection type in Linear Projection is available only for categorical target variables with at least three distinct values?",
+      "type": "factoid"
+    },
+    {
+      "id": "orange_qa_MCQ_test_21",
+      "body": "Does the GEO Data Sets widget store downloaded datasets locally?",
+      "type": "factoid"
+    },
+    {
+      "id": "orange_qa_MCQ_test_22",
+      "body": "What preprocessing step is automatically applied to categorical variables in the PCA widget?",
+      "type": "factoid"
+    },
+    {
+      "id": "orange_qa_MCQ_test_23",
+      "body": "What does the Local Outlier Factor measure?",
+      "type": "factoid"
+    },
+    {
+      "id": "orange_qa_MCQ_test_24",
+      "body": "What happens if extensions are not installed on the server for PostgreSQL in SQL Table?",
+      "type": "factoid"
+    },
+    {
+      "id": "orange_qa_MCQ_test_25",
+      "body": "Can you use a custom dictionary in Sentiment Analysis?",
+      "type": "factoid"
+    },
+    {
+      "id": "orange_qa_MCQ_test_26",
+      "body": "Which information criterion is NOT available for optimization in the VAR Model widget?",
+      "type": "factoid"
+    },
+    {
+      "id": "orange_qa_MCQ_test_27",
+      "body": "What does the 'c' flag stand for in the header?",
+      "type": "factoid"
+    },
+    {
+      "id": "orange_qa_MCQ_test_28",
+      "body": "Can you use a separate reference set in KEGG Pathways?",
+      "type": "factoid"
+    },
+    {
+      "id": "orange_qa_MCQ_test_29",
+      "body": "What does 'Dispersion' show for categorical features in Column Statistics?",
+      "type": "factoid"
+    },
+    {
+      "id": "orange_qa_MCQ_test_30",
+      "body": "What does the gray bar represent in the LDAvis plot?",
+      "type": "factoid"
+    },
+    {
+      "id": "orange_qa_MCQ_test_31",
+      "body": "Which aggregation method is NOT available in Moving Transform?",
+      "type": "factoid"
+    },
+    {
+      "id": "orange_qa_MCQ_test_32",
+      "body": "Does Distance Transformation accept Data as input?",
+      "type": "factoid"
+    },
+    {
+      "id": "orange_qa_MCQ_test_33",
+      "body": "What does 'Stack columns' do in the Distributions widget?",
+      "type": "factoid"
+    },
+    {
+      "id": "orange_qa_MCQ_test_34",
+      "body": "Does Document Embedding work on n-grams other than words?",
+      "type": "factoid"
+    },
+    {
+      "id": "orange_qa_MCQ_test_35",
+      "body": "Which parameter applies only to regression tasks in the standard SVM model?",
+      "type": "factoid"
+    },
+    {
+      "id": "orange_qa_MCQ_test_36",
+      "body": "What option allows comparing the interior coloring with all instances in the Mosaic Display widget?",
+      "type": "factoid"
+    },
+    {
+      "id": "orange_qa_MCQ_test_37",
+      "body": "Which clustering method is used by default for clustering rows/columns in the Heat Map widget?",
+      "type": "factoid"
+    },
+    {
+      "id": "orange_qa_MCQ_test_38",
+      "body": "Which of the following is NOT a supported distance metric in the Neighbors widget?",
+      "type": "factoid"
+    },
+    {
+      "id": "orange_qa_MCQ_test_39",
+      "body": "Can you manually edit the ontology in the Ontology widget?",
+      "type": "factoid"
+    },
+    {
+      "id": "orange_qa_MCQ_test_40",
+      "body": "Can you hide anchors inside a certain radius in FreeViz?",
+      "type": "factoid"
+    },
+    {
+      "id": "orange_qa_MCQ_test_41",
+      "body": "What is plotted on the y-axis of the Volcano Plot?",
+      "type": "factoid"
+    },
+    {
+      "id": "orange_qa_MCQ_test_42",
+      "body": "Which kernel is NOT available in the SVM widget in Orange?",
+      "type": "factoid"
+    },
+    {
+      "id": "orange_qa_MCQ_test_43",
+      "body": "Can you query NY Times articles from 1851?",
+      "type": "factoid"
+    },
+    {
+      "id": "orange_qa_MCQ_test_44",
+      "body": "Can you calculate coefficients using PACF in the Correlogram widget?",
+      "type": "factoid"
+    },
+    {
+      "id": "orange_qa_MCQ_test_45",
+      "body": "What does PMI stand for in the context of the Collocations widget?",
+      "type": "factoid"
+    },
+    {
+      "id": "orange_qa_MCQ_test_46",
+      "body": "What does 'Average word length' represent in the Statistics widget?",
+      "type": "factoid"
+    },
+    {
+      "id": "orange_qa_MCQ_test_47",
+      "body": "Can you use a learner for imputation in the Impute widget?",
+      "type": "factoid"
+    },
+    {
+      "id": "orange_qa_MCQ_test_48",
+      "body": "Can you fetch dividend data with Yahoo Finance?",
+      "type": "factoid"
+    },
+    {
+      "id": "orange_qa_MCQ_test_49",
+      "body": "What is the output of the Single Sample Scoring widget?",
+      "type": "factoid"
+    },
+    {
+      "id": "orange_qa_MCQ_test_50",
+      "body": "What happens if 'Custom step size' is defined in Time Slice?",
+      "type": "factoid"
+    },
+    {
+      "id": "orange_qa_MCQ_test_51",
+      "body": "What does the 'Mode' statistic show in Column Statistics?",
+      "type": "factoid"
+    },
+    {
+      "id": "orange_qa_MCQ_test_52",
+      "body": "Which option in Continuize removes non-binary categorical variables?",
+      "type": "factoid"
+    },
+    {
+      "id": "orange_qa_MCQ_test_53",
+      "body": "Does Single Cell Datasets require an internet connection to list datasets?",
+      "type": "factoid"
+    },
+    {
+      "id": "orange_qa_MCQ_test_54",
+      "body": "What information is displayed in the list of GEO data sets?",
+      "type": "factoid"
+    },
+    {
+      "id": "orange_qa_MCQ_test_55",
+      "body": "What is plotted on the x-axis of the Volcano Plot?",
+      "type": "factoid"
+    },
+    {
+      "id": "orange_qa_MCQ_test_56",
+      "body": "What does the color blue indicate in a Sieve Diagram?",
+      "type": "factoid"
+    },
+    {
+      "id": "orange_qa_MCQ_test_57",
+      "body": "Can Select by Data Index retrieve original data from transformed data?",
+      "type": "factoid"
+    },
+    {
+      "id": "orange_qa_MCQ_test_58",
+      "body": "What happens if you select data instances with low silhouette scores in the Silhouette Plot widget and send them to a Scatter Plot?",
+      "type": "factoid"
+    },
+    {
+      "id": "orange_qa_MCQ_test_59",
+      "body": "What initialization method positions points along principal coordinate axes in MDS?",
+      "type": "factoid"
+    },
+    {
+      "id": "orange_qa_MCQ_test_60",
+      "body": "What is the output of the Randomize widget?",
+      "type": "factoid"
+    },
+    {
+      "id": "orange_qa_MCQ_test_61",
+      "body": "Can you select the proportion of the dataset to shuffle in the Randomize widget?",
+      "type": "factoid"
+    },
+    {
+      "id": "orange_qa_MCQ_test_62",
+      "body": "Which widget is suggested as a 'See also' for Seasonal Adjustment?",
+      "type": "factoid"
+    },
+    {
+      "id": "orange_qa_MCQ_test_63",
+      "body": "Which regression metric in Test and Score measures the average of the squares of the errors?",
+      "type": "factoid"
+    },
+    {
+      "id": "orange_qa_MCQ_test_64",
+      "body": "Can you search for tweets by author in the Twitter widget?",
+      "type": "factoid"
+    },
+    {
+      "id": "orange_qa_MCQ_test_65",
+      "body": "Can you filter datasets in the Datasets widget?",
+      "type": "factoid"
+    },
+    {
+      "id": "orange_qa_MCQ_test_66",
+      "body": "What is the output of the Guardian widget?",
+      "type": "factoid"
+    },
+    {
+      "id": "orange_qa_MCQ_test_67",
+      "body": "Can you select multiple gene sets in the Gene Set Enrichment widget?",
+      "type": "factoid"
+    },
+    {
+      "id": "orange_qa_MCQ_test_68",
+      "body": "What preprocessing step is applied to categorical variables in Logistic Regression?",
+      "type": "factoid"
+    },
+    {
+      "id": "orange_qa_MCQ_test_69",
+      "body": "What does the 'Update All' button do in Databases Update?",
+      "type": "factoid"
+    },
+    {
+      "id": "orange_qa_MCQ_test_70",
+      "body": "Can you use custom gene sets in Single Sample Scoring?",
+      "type": "factoid"
+    },
+    {
+      "id": "orange_qa_MCQ_test_71",
+      "body": "What is the output of the Homologs widget?",
+      "type": "factoid"
+    },
+    {
+      "id": "orange_qa_MCQ_test_72",
+      "body": "Which inversion type calculates max(X) - X?",
+      "type": "factoid"
+    },
+    {
+      "id": "orange_qa_MCQ_test_73",
+      "body": "What happens if 'Normalize columns' is selected in the k-Means widget?",
+      "type": "factoid"
+    },
+    {
+      "id": "orange_qa_MCQ_test_74",
+      "body": "What is the default value range for zero-based transformation in Continuize?",
+      "type": "factoid"
+    },
+    {
+      "id": "orange_qa_MCQ_test_75",
+      "body": "How is cross-validation performed in Model Evaluation?",
+      "type": "factoid"
+    },
+    {
+      "id": "orange_qa_MCQ_test_76",
+      "body": "What does the 'Alpha' parameter represent in the Neural Network widget?",
+      "type": "factoid"
+    },
+    {
+      "id": "orange_qa_MCQ_test_77",
+      "body": "What parameter must be set to define the season length in Seasonal Adjustment?",
+      "type": "factoid"
+    },
+    {
+      "id": "orange_qa_MCQ_test_78",
+      "body": "Which tokenizer in Preprocess Text keeps hashtags and emoticons?",
+      "type": "factoid"
+    },
+    {
+      "id": "orange_qa_MCQ_test_79",
+      "body": "What happens when you select a part of the visualization in the Venn Diagram widget?",
+      "type": "factoid"
+    },
+    {
+      "id": "orange_qa_MCQ_test_80",
+      "body": "What inputs does the Permutation Plot widget require?",
+      "type": "factoid"
+    },
+    {
+      "id": "orange_qa_MCQ_test_81",
+      "body": "In the Bar Plot example using heart-disease data, what does the 'diameter narrowing' variable define?",
+      "type": "factoid"
+    },
+    {
+      "id": "orange_qa_MCQ_test_82",
+      "body": "How many parallel charts can be displayed in Line Chart?",
+      "type": "factoid"
+    },
+    {
+      "id": "orange_qa_MCQ_test_83",
+      "body": "Which order of differencing is available in the Difference widget?",
+      "type": "factoid"
+    },
+    {
+      "id": "orange_qa_MCQ_test_84",
+      "body": "Can you switch to a logarithmic y-axis in Line Chart?",
+      "type": "factoid"
+    },
+    {
+      "id": "orange_qa_MCQ_test_85",
+      "body": "Can you set values to random in the Create Instance widget?",
+      "type": "factoid"
+    },
+    {
+      "id": "orange_qa_MCQ_test_86",
+      "body": "What does 'Count defined' aggregation do in the Pivot Table widget?",
+      "type": "factoid"
+    },
+    {
+      "id": "orange_qa_MCQ_test_87",
+      "body": "Which scoring method in the Rank widget reduces the bias towards multivalued features?",
+      "type": "factoid"
+    },
+    {
+      "id": "orange_qa_MCQ_test_88",
+      "body": "Which format is used for storing preprocessing of Corpus objects in Save Data?",
+      "type": "factoid"
+    },
+    {
+      "id": "orange_qa_MCQ_test_89",
+      "body": "What does L2 regularization do in Bag of Words?",
+      "type": "factoid"
+    },
+    {
+      "id": "orange_qa_MCQ_test_90",
+      "body": "Can you filter marker genes in the Marker Genes widget?",
+      "type": "factoid"
+    },
+    {
+      "id": "orange_qa_MCQ_test_91",
+      "body": "Which widget can load the matrix saved by Save Distance Matrix?",
+      "type": "factoid"
+    },
+    {
+      "id": "orange_qa_MCQ_test_92",
+      "body": "Does the Word Cloud widget support default preprocessing?",
+      "type": "factoid"
+    },
+    {
+      "id": "orange_qa_MCQ_test_93",
+      "body": "What does 'Show pathways in full orthology' do in KEGG Pathways?",
+      "type": "factoid"
+    },
+    {
+      "id": "orange_qa_MCQ_test_94",
+      "body": "What are the outputs of the Align Datasets widget?",
+      "type": "factoid"
+    },
+    {
+      "id": "orange_qa_MCQ_test_95",
+      "body": "What input does Correspondence Analysis require?",
+      "type": "factoid"
+    },
+    {
+      "id": "orange_qa_MCQ_test_96",
+      "body": "What happens if you click 'Apply' in the Stacking widget?",
+      "type": "factoid"
+    },
+    {
+      "id": "orange_qa_MCQ_test_97",
+      "body": "What happens if 'Send Data Automatically' is ticked in Single Cell Datasets?",
+      "type": "factoid"
+    },
+    {
+      "id": "orange_qa_MCQ_test_98",
+      "body": "Can the Tree widget handle both categorical and numeric datasets?",
+      "type": "factoid"
+    },
+    {
+      "id": "orange_qa_MCQ_test_99",
+      "body": "What is the output of the Distance File widget?",
+      "type": "factoid"
+    },
+    {
+      "id": "orange_qa_MCQ_test_100",
+      "body": "Where can you observe the effect of each variable from the PLS model?",
+      "type": "factoid"
+    },
+    {
+      "id": "orange_qa_MCQ_test_101",
+      "body": "Can the Linear Regression widget be used for classification tasks in Orange?",
+      "type": "factoid"
+    },
+    {
+      "id": "orange_qa_MCQ_test_102",
+      "body": "What does 'As a distinct value' do in the Impute widget?",
+      "type": "factoid"
+    },
+    {
+      "id": "orange_qa_MCQ_test_103",
+      "body": "Which of the following is a normalization option in Distance Transformation?",
+      "type": "factoid"
+    },
+    {
+      "id": "orange_qa_MCQ_test_104",
+      "body": "Which widget provides the necessary input signal for the Calibration Plot?",
+      "type": "factoid"
+    },
+    {
+      "id": "orange_qa_MCQ_test_105",
+      "body": "What output does the Louvain Clustering widget provide besides the data with cluster labels?",
+      "type": "factoid"
+    },
+    {
+      "id": "orange_qa_MCQ_test_106",
+      "body": "Can As Timeseries use continuous attributes as time?",
+      "type": "factoid"
+    },
+    {
+      "id": "orange_qa_MCQ_test_107",
+      "body": "What does the 'Lexicon' filter do in Preprocess Text?",
+      "type": "factoid"
+    },
+    {
+      "id": "orange_qa_MCQ_test_108",
+      "body": "Can you rename the output table in the Edit Domain widget?",
+      "type": "factoid"
+    },
+    {
+      "id": "orange_qa_MCQ_test_109",
+      "body": "What is the output 'Annotated data' in Select by Data Index?",
+      "type": "factoid"
+    },
+    {
+      "id": "orange_qa_MCQ_test_110",
+      "body": "What does the Calibration Plot output when metrics like F1 are selected?",
+      "type": "factoid"
+    },
+    {
+      "id": "orange_qa_MCQ_test_111",
+      "body": "What is the default name of the learner produced by the Naive Bayes widget?",
+      "type": "factoid"
+    },
+    {
+      "id": "orange_qa_MCQ_test_112",
+      "body": "What preprocessing does SVM apply to classification data by default?",
+      "type": "factoid"
+    },
+    {
+      "id": "orange_qa_MCQ_test_113",
+      "body": "What is the output of the Twitter widget?",
+      "type": "factoid"
+    },
+    {
+      "id": "orange_qa_MCQ_test_114",
+      "body": "Which error measure is NOT calculated by the Model Evaluation widget?",
+      "type": "factoid"
+    },
+    {
+      "id": "orange_qa_MCQ_test_115",
+      "body": "What does the 'epsilon for DBSCAN' parameter control in Annotator?",
+      "type": "factoid"
+    },
+    {
+      "id": "orange_qa_MCQ_test_116",
+      "body": "What does the Concatenate widget do if column names match but types don't?",
+      "type": "factoid"
+    },
+    {
+      "id": "orange_qa_MCQ_test_117",
+      "body": "Can PCA be used as a feature scorer in Orange?",
+      "type": "factoid"
+    },
+    {
+      "id": "orange_qa_MCQ_test_118",
+      "body": "If 'include duplicates' is NOT selected in the Venn Diagram widget when matching by variable values, what is the output?",
+      "type": "factoid"
+    },
+    {
+      "id": "orange_qa_MCQ_test_119",
+      "body": "How are discrete time series imputed in the Interpolate widget (unless 'nearest' is set)?",
+      "type": "factoid"
+    },
+    {
+      "id": "orange_qa_MCQ_test_120",
+      "body": "Should you modify input objects in place in the Python Script widget?",
+      "type": "factoid"
+    },
+    {
+      "id": "orange_qa_MCQ_test_121",
+      "body": "What does the 'Show pie charts' option do in the SOM widget?",
+      "type": "factoid"
+    },
+    {
+      "id": "orange_qa_MCQ_test_122",
+      "body": "Can you set the maximum number of iterations in the k-Means widget?",
+      "type": "factoid"
+    },
+    {
+      "id": "orange_qa_MCQ_test_123",
+      "body": "Which attributes are not used in modeling but included in the dataset?",
+      "type": "factoid"
+    },
+    {
+      "id": "orange_qa_MCQ_test_124",
+      "body": "What does the color represent by default in Spiralogram?",
+      "type": "factoid"
+    },
+    {
+      "id": "orange_qa_MCQ_test_125",
+      "body": "How can you override the default preprocessing in the kNN widget?",
+      "type": "factoid"
+    },
+    {
+      "id": "orange_qa_MCQ_test_126",
+      "body": "How do you add a new label to a feature in Edit Domain?",
+      "type": "factoid"
+    },
+    {
+      "id": "orange_qa_MCQ_test_127",
+      "body": "Which of the following is listed as an official Orange3 add-on in OFFICIAL_ADDONS.txt?",
+      "type": "factoid"
+    },
+    {
+      "id": "orange_qa_MCQ_test_128",
+      "body": "What does the 'i' prefix stand for in the file header?",
+      "type": "factoid"
+    },
+    {
+      "id": "orange_qa_MCQ_test_129",
+      "body": "How are groups defined in the Group By widget?",
+      "type": "factoid"
+    },
+    {
+      "id": "orange_qa_MCQ_test_130",
+      "body": "What input does the Granger Causality widget require?",
+      "type": "factoid"
+    },
+    {
+      "id": "orange_qa_MCQ_test_131",
+      "body": "What does the Data Table widget do in a workflow?",
+      "type": "factoid"
+    },
+    {
+      "id": "orange_qa_MCQ_test_132",
+      "body": "In regression predictions, what does the blue color indicate in the difference column?",
+      "type": "factoid"
+    },
+    {
+      "id": "orange_qa_MCQ_test_133",
+      "body": "Where are the tokens sent for vectorization in Document Embedding?",
+      "type": "factoid"
+    },
+    {
+      "id": "orange_qa_MCQ_test_134",
+      "body": "What does the 'Stratified' option ensure in Cross-validation within the Test and Score widget?",
+      "type": "factoid"
+    },
+    {
+      "id": "orange_qa_MCQ_test_135",
+      "body": "How do you exponentiate in the Formula widget?",
+      "type": "factoid"
+    },
+    {
+      "id": "orange_qa_MCQ_test_136",
+      "body": "What does the 'Keep aspect ratio' option do in the Heat Map widget?",
+      "type": "factoid"
+    },
+    {
+      "id": "orange_qa_MCQ_test_137",
+      "body": "Does the Wikipedia widget retrieve disambiguations?",
+      "type": "factoid"
+    },
+    {
+      "id": "orange_qa_MCQ_test_138",
+      "body": "What statistic is displayed in the plot statistics of Sieve Diagram?",
+      "type": "factoid"
+    },
+    {
+      "id": "orange_qa_MCQ_test_139",
+      "body": "What transformation is available for node size in the Pythagorean Forest widget?",
+      "type": "factoid"
+    },
+    {
+      "id": "orange_qa_MCQ_test_140",
+      "body": "What does the 'r' value reported for the regression line correspond to?",
+      "type": "factoid"
+    },
+    {
+      "id": "orange_qa_MCQ_test_141",
+      "body": "What input does the Document Map widget require?",
+      "type": "factoid"
+    },
+    {
+      "id": "orange_qa_MCQ_test_142",
+      "body": "How can you filter results in the Gene Sets widget?",
+      "type": "factoid"
+    },
+    {
+      "id": "orange_qa_MCQ_test_143",
+      "body": "Can you construct advanced queries in the PubMed widget?",
+      "type": "factoid"
+    },
+    {
+      "id": "orange_qa_MCQ_test_144",
+      "body": "Which grid types are available in the SOM widget?",
+      "type": "factoid"
+    },
+    {
+      "id": "orange_qa_MCQ_test_145",
+      "body": "What does 'Show cluster hull' do in the Annotator widget?",
+      "type": "factoid"
+    },
+    {
+      "id": "orange_qa_MCQ_test_146",
+      "body": "What does the 'Selection' box control in Differential Expression?",
+      "type": "factoid"
+    },
+    {
+      "id": "orange_qa_MCQ_test_147",
+      "body": "Which sampling method in Test and Score uses the whole dataset for training and then for testing?",
+      "type": "factoid"
+    },
+    {
+      "id": "orange_qa_MCQ_test_148",
+      "body": "What is the default behavior if 'Apply automatically' is ticked in Aggregate Columns?",
+      "type": "factoid"
+    },
+    {
+      "id": "orange_qa_MCQ_test_149",
+      "body": "Is the Split widget typically used with survey data?",
+      "type": "factoid"
+    },
+    {
+      "id": "orange_qa_MCQ_test_150",
+      "body": "What happens if you check 'Stretch bars' in the Box Plot widget for discrete attributes?",
+      "type": "factoid"
+    },
+    {
+      "id": "orange_qa_MCQ_test_151",
+      "body": "Does the CN2 Rule Induction widget work for regression tasks?",
+      "type": "factoid"
+    },
+    {
+      "id": "orange_qa_MCQ_test_152",
+      "body": "Which calibration method uses Isotonic Regression?",
+      "type": "factoid"
+    },
+    {
+      "id": "orange_qa_MCQ_test_153",
+      "body": "Can you use dynamic time warping in Align Datasets?",
+      "type": "factoid"
+    },
+    {
+      "id": "orange_qa_MCQ_test_154",
+      "body": "What happens if 'Commit automatically' is ticked in the Filter widget?",
+      "type": "factoid"
+    },
+    {
+      "id": "orange_qa_MCQ_test_155",
+      "body": "What is the output of the Collocations widget?",
+      "type": "factoid"
+    },
+    {
+      "id": "orange_qa_MCQ_test_156",
+      "body": "What is the output of the PubMed widget?",
+      "type": "factoid"
+    },
+    {
+      "id": "orange_qa_MCQ_test_157",
+      "body": "What happens when you select rows in the Data Table widget?",
+      "type": "factoid"
+    },
+    {
+      "id": "orange_qa_MCQ_test_158",
+      "body": "What does 'Invert differencing direction' do?",
+      "type": "factoid"
+    },
+    {
+      "id": "orange_qa_MCQ_test_159",
+      "body": "Which interpolation method replaces missing values with the previous defined value?",
+      "type": "factoid"
+    },
+    {
+      "id": "orange_qa_MCQ_test_160",
+      "body": "Can the Calibration Plot widget output a calibrated model for non-binary classes?",
+      "type": "factoid"
+    },
+    {
+      "id": "orange_qa_MCQ_test_161",
+      "body": "Under what condition will the ROC Analysis widget output a model with a new operating threshold?",
+      "type": "factoid"
+    },
+    {
+      "id": "orange_qa_MCQ_test_162",
+      "body": "Can you visualize regression lines for individual class values in Scatter Plot?",
+      "type": "factoid"
+    },
+    {
+      "id": "orange_qa_MCQ_test_163",
+      "body": "Can you choose the organism for which to identify homologs in the Homologs widget?",
+      "type": "factoid"
+    },
+    {
+      "id": "orange_qa_MCQ_test_164",
+      "body": "What does 'Jittering' do in the MDS widget?",
+      "type": "factoid"
+    },
+    {
+      "id": "orange_qa_MCQ_test_165",
+      "body": "Can you browse for saved models in the Load Model widget?",
+      "type": "factoid"
+    },
+    {
+      "id": "orange_qa_MCQ_test_166",
+      "body": "Which decision threshold optimization option in Calibrated Learner optimizes the F1 score?",
+      "type": "factoid"
+    },
+    {
+      "id": "orange_qa_MCQ_test_167",
+      "body": "Which delimiter was used in the example with the Orange survey data in the Split widget documentation?",
+      "type": "factoid"
+    },
+    {
+      "id": "orange_qa_MCQ_test_168",
+      "body": "Does Data Info show the number of meta attributes?",
+      "type": "factoid"
+    },
+    {
+      "id": "orange_qa_MCQ_test_169",
+      "body": "What is the output of the Single Cell Datasets widget?",
+      "type": "factoid"
+    },
+    {
+      "id": "orange_qa_MCQ_test_170",
+      "body": "Can data with only numeric variables be displayed in the Pivot Table?",
+      "type": "factoid"
+    },
+    {
+      "id": "orange_qa_MCQ_test_171",
+      "body": "Why is studying homologs useful?",
+      "type": "factoid"
+    },
+    {
+      "id": "orange_qa_MCQ_test_172",
+      "body": "What does 'Multi-variate interpolation' do?",
+      "type": "factoid"
+    },
+    {
+      "id": "orange_qa_MCQ_test_173",
+      "body": "What does the Silhouette score measure in the k-Means widget?",
+      "type": "factoid"
+    },
+    {
+      "id": "orange_qa_MCQ_test_174",
+      "body": "What indicates the 'best' tree in the Pythagorean Forest visualization?",
+      "type": "factoid"
+    },
+    {
+      "id": "orange_qa_MCQ_test_175",
+      "body": "What types of regularization are supported by the Logistic Regression widget?",
+      "type": "factoid"
+    },
+    {
+      "id": "orange_qa_MCQ_test_176",
+      "body": "Which method in the Outliers widget uses random forests for outlier detection?",
+      "type": "factoid"
+    },
+    {
+      "id": "orange_qa_MCQ_test_177",
+      "body": "How are elements sorted in the Distance Map widget by default?",
+      "type": "factoid"
+    },
+    {
+      "id": "orange_qa_MCQ_test_178",
+      "body": "Does the Twitter widget allow collecting results over time?",
+      "type": "factoid"
+    },
+    {
+      "id": "orange_qa_MCQ_test_179",
+      "body": "What does the 'Opacity' slider control in the Linear Projection widget?",
+      "type": "factoid"
+    },
+    {
+      "id": "orange_qa_MCQ_test_180",
+      "body": "What does the 'area' scale option do in the Violin Plot widget?",
+      "type": "factoid"
+    },
+    {
+      "id": "orange_qa_MCQ_test_181",
+      "body": "What does the 'Embedding' method in Extract Keywords use to score words?",
+      "type": "factoid"
+    },
+    {
+      "id": "orange_qa_MCQ_test_182",
+      "body": "Can you query Wikipedia in different languages?",
+      "type": "factoid"
+    },
+    {
+      "id": "orange_qa_MCQ_test_183",
+      "body": "How do you execute the script in the Python Script widget via keyboard shortcut?",
+      "type": "factoid"
+    },
+    {
+      "id": "orange_qa_MCQ_test_184",
+      "body": "If the regression line in the Permutation Plot has a high intercept, what does it suggest?",
+      "type": "factoid"
+    },
+    {
+      "id": "orange_qa_MCQ_test_185",
+      "body": "What happens if 'Send automatically' is ticked in the Bar Plot widget?",
+      "type": "factoid"
+    },
+    {
+      "id": "orange_qa_MCQ_test_186",
+      "body": "Can the Distance Matrix widget visualize distances between rows?",
+      "type": "factoid"
+    },
+    {
+      "id": "orange_qa_MCQ_test_187",
+      "body": "Which widget is used to load a previously saved trained model in Orange?",
+      "type": "factoid"
+    },
+    {
+      "id": "orange_qa_MCQ_test_188",
+      "body": "What does 'Replicable training' do in the Gradient Boosting widget?",
+      "type": "factoid"
+    },
+    {
+      "id": "orange_qa_MCQ_test_189",
+      "body": "What are 'Meta attributes' in the context of the Select Columns widget?",
+      "type": "factoid"
+    },
+    {
+      "id": "orange_qa_MCQ_test_190",
+      "body": "Can you select which series to calculate the periodogram for in the widget?",
+      "type": "factoid"
+    },
+    {
+      "id": "orange_qa_MCQ_test_191",
+      "body": "What is the input for the ROC Analysis widget?",
+      "type": "factoid"
+    },
+    {
+      "id": "orange_qa_MCQ_test_192",
+      "body": "Does the ARIMA Model widget support confidence intervals?",
+      "type": "factoid"
+    },
+    {
+      "id": "orange_qa_MCQ_test_193",
+      "body": "What is the output of the Wikipedia widget?",
+      "type": "factoid"
+    },
+    {
+      "id": "orange_qa_MCQ_test_194",
+      "body": "What is the output of the Time Slice widget?",
+      "type": "factoid"
+    },
+    {
+      "id": "orange_qa_MCQ_test_195",
+      "body": "What does the blue highlighted area represent in the Box Plot widget?",
+      "type": "factoid"
+    },
+    {
+      "id": "orange_qa_MCQ_test_196",
+      "body": "Which regularization method in Linear Regression minimizes a penalized version of the least squares loss function with an L1-norm penalty?",
+      "type": "factoid"
+    },
+    {
+      "id": "orange_qa_MCQ_test_197",
+      "body": "What input does the Score Cells widget require?",
+      "type": "factoid"
+    },
+    {
+      "id": "orange_qa_MCQ_test_198",
+      "body": "What does the red line in the PCA scree plot represent?",
+      "type": "factoid"
+    },
+    {
+      "id": "orange_qa_MCQ_test_199",
+      "body": "Can you reorder preprocessing steps in the Preprocess Text widget?",
+      "type": "factoid"
+    }
+  ]
+}

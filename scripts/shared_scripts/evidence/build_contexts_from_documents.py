@@ -20,7 +20,9 @@ from typing import Dict, List, Set, Tuple
 
 logger = logging.getLogger(__name__)
 
-PUBMED_URL_PATTERN = re.compile(r"pubmed/(\d+)/?$", re.I)
+# Accept any non-whitespace, non-slash sequence after 'pubmed/' as the document ID.
+# This works for both numeric PubMed PMIDs and slug-style IDs used in Orange docs.
+PUBMED_URL_PATTERN = re.compile(r"pubmed/([^/\s]+)/?$", re.I)
 
 
 def parse_args() -> argparse.Namespace:
