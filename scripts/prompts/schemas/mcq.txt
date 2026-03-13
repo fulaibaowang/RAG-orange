@@ -1,0 +1,7 @@
+Return valid JSON exactly in this format:
+{"exact_answer":["..."],"ideal_answer":"...","evidence_ids":["E01"]}
+
+Rules:
+- exact_answer must be exactly either "A" or "B" or "C" or "D (upper case).
+- ideal_answer: 1–2 sentences grounded in evidence.
+- If insufficient evidence: exact_answer=[], ideal_answer="Insufficient evidence.", evidence_ids=[].

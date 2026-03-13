@@ -360,6 +360,26 @@ def parse_answer_json_for_type(raw: str, qtype: str, q_id: Optional[str] = None)
         if ea.strip().lower() not in ("yes", "no"):
             raise ValueError(f"yesno exact_answer must be 'yes' or 'no', got: {ea!r}")
         out["exact_answer"] = ea.strip().lower()
+    elif qtype == "mcq":
+        if "exact_answer" not in obj:
+            raise ValueError("mcq type requires 'exact_answer'")
+        ea = obj["exact_answer"]
+        # Accept either a single string "A"/"B"/"C"/"D" or a list like ["A"].
+        valid_opts = {"A", "B", "C", "D"}
+        if isinstance(ea, str):
+            choice = ea.strip().upper()
+            if choice not in valid_opts:
+                raise ValueError(f"mcq exact_answer must be one of {sorted(valid_opts)}, got: {ea!r}")
+            out["exact_answer"] = choice
+        elif isinstance(ea, list) and ea:
+            if not all(isinstance(x, str) for x in ea):
+                raise ValueError("mcq exact_answer list must contain only strings")
+            choice = ea[0].strip().upper()
+            if choice not in valid_opts:
+                raise ValueError(f"mcq exact_answer must be one of {sorted(valid_opts)}, got: {ea!r}")
+            out["exact_answer"] = choice
+        else:
+            raise ValueError("mcq exact_answer must be a string or a non-empty list of strings")
     elif qtype in ("factoid", "list"):
         if "exact_answer" not in obj:
             raise ValueError(f"{qtype} type requires 'exact_answer'")
@@ -472,7 +492,7 @@ def main() -> int:
 
     # Priming specific schemas is no longer necessary now that schema blocks are optional,
     # but we keep this call to warm the cache for standard types when schema files exist.
-    for _q in ("summary", "yesno", "factoid", "list"):
+    for _q in ("summary", "yesno", "factoid", "list", "mcq"):
         get_schema_block(_q)
 
     def fill_user_prompt(question: str, evidence_block: str, qtype: str, schema_block: str) -> str:
@@ -516,7 +536,7 @@ def main() -> int:
             out["ideal_answer"] = None
             out["evidence_ids"] = []
             out["error"] = "missing_question_or_contexts"
-            if qtype in ("yesno", "factoid", "list"):
+            if qtype in ("yesno", "factoid", "list", "mcq"):
                 out["exact_answer"] = None
             return idx, out
 
@@ -544,7 +564,7 @@ def main() -> int:
                 parsed = parse_answer_json_for_type(raw, qtype, q_id=q_id)
                 out["ideal_answer"] = parsed["ideal_answer"]
                 out["evidence_ids"] = parsed["evidence_ids"]
-                if qtype in ("yesno", "factoid", "list"):
+                if qtype in ("yesno", "factoid", "list", "mcq"):
                     out["exact_answer"] = parsed.get("exact_answer")
                 break
             except Exception as e:
@@ -575,7 +595,7 @@ def main() -> int:
             out["ideal_answer"] = None
             out["evidence_ids"] = []
             out["error"] = str(last_error)
-            if qtype in ("yesno", "factoid", "list"):
+            if qtype in ("yesno", "factoid", "list", "mcq"):
                 out["exact_answer"] = None
         return idx, out
 
@@ -626,7 +646,7 @@ def main() -> int:
             rec["ideal_answer"] = None
             rec["evidence_ids"] = []
             rec["error"] = "missing_from_results"
-            if obj.get("type") in ("yesno", "factoid", "list"):
+            if obj.get("type") in ("yesno", "factoid", "list", "mcq"):
                 rec["exact_answer"] = None
             records_out.append(rec)
             logger.warning("No result for index %d (id=%s); added record with error", i, obj.get("id"))
