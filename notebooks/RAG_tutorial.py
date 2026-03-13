@@ -41,8 +41,46 @@ branch = "main"
 # Optional: install dependencies from the cloned repo (commented out)
 # print("📦 Installing dependencies from cloned repo...")
 # #!pip install -q -r {REPO_NAME}/requirements.txt
-
 print("Using local project files. External clone/install is kept above but commented out.")
+
+# %% [markdown]
+# #### Running in Google Colab?
+#
+# If you open this notebook directly in Google Colab (via the GitHub link), run
+# the next cell once to clone the repository and install dependencies. When
+# working locally inside the cloned repo, you can skip it.
+
+# %%
+try:
+    import google.colab  # type: ignore
+    IN_COLAB = True
+except ImportError:
+    IN_COLAB = False
+
+if IN_COLAB:
+    REPO_URL = "https://github.com/fulaibaowang/RAG-orange.git"
+    REPO_NAME = "RAG-orange"
+    branch = "main"
+
+    if not os.path.isdir(REPO_NAME):
+        print(f"📥 Cloning {REPO_NAME} from GitHub...")
+        get_ipython().system(f"git clone -b {branch} {REPO_URL}")
+    else:
+        print(f"🔄 {REPO_NAME} already present, skipping clone.")
+
+    # Change working directory to the repo root (so relative paths match).
+    os.chdir(REPO_NAME)
+    print(f"Working directory set to: {os.getcwd()}")
+
+    # Optionally install Python dependencies if needed.
+    req_path = os.path.join(os.getcwd(), "requirements.txt")
+    if os.path.isfile(req_path):
+        print("📦 Installing Python dependencies from requirements.txt (this may take a while)...")
+        get_ipython().system("pip install -q -r requirements.txt")
+    else:
+        print("No requirements.txt found, assuming dependencies are already installed.")
+else:
+    print("Not running in Google Colab; using existing local environment.")
 
 # %% id="12a95f4e"
 import os
@@ -347,13 +385,13 @@ evidence_mcq_con_path = Path(OUTPUT_DIR) / 'evidence_baseline' / 'orange_qa_MCQ-
 rag_mcq_dataset = build_rag_eval_dataset(
     contexts_path=evidence_mcq_path,
     original_mcq_path=Path(TESTDATA_MCQ_FILE),
-    top_k=3,
+    top_k=1,
     restrict_to_contexts=False,
 )
 rag_mcq_con_dataset = build_rag_eval_dataset(
     contexts_path=evidence_mcq_con_path,
     original_mcq_path=Path(TESTDATA_MCQ_CON_FILE),
-    top_k=3,
+    top_k=1,
     restrict_to_contexts=False,
 )
 
@@ -472,6 +510,13 @@ def debug_qwen_outputs(sample_dataset, num_examples=5):
             print()
 
 # %%
+# Uncomment to inspect a few raw generations from Qwen3-0.6B.
+# Start with the RAG-augmented MCQ dataset; you can also try the original
+# (non-RAG) dataset by passing `test_mcq_dataset` instead.
+#
+debug_qwen_outputs(rag_mcq_dataset, num_examples=2)
+
+# %%
 print("Evaluating Qwen3-0.6B with RAG context on MCQ...")
 accuracy_mcq_rag, se_mcq_rag = evaluate_model(model, tokenizer, rag_mcq_dataset, batch_size=MODEL_CONFIG['batch_size'])
 print(f"MCQ with RAG: accuracy={accuracy_mcq_rag:.1f}%, SE={se_mcq_rag:.2f}")
@@ -480,29 +525,128 @@ print("\nEvaluating Qwen3-0.6B with RAG context on MCQ-con...")
 accuracy_mcq_con_rag, se_mcq_con_rag = evaluate_model(model, tokenizer, rag_mcq_con_dataset, batch_size=MODEL_CONFIG['batch_size'])
 print(f"MCQ-con with RAG: accuracy={accuracy_mcq_con_rag:.1f}%, SE={se_mcq_con_rag:.2f}")
 
-# %%
-# Uncomment to inspect a few raw generations from Qwen3-0.6B.
-# Start with the RAG-augmented MCQ dataset; you can also try the original
-# (non-RAG) dataset by passing `test_mcq_dataset` instead.
+# %% [markdown]
+# ### 2.6 Fine-tuned Qwen3-0.6B + RAG (optional)
 #
-# debug_qwen_outputs(rag_mcq_dataset, num_examples=5)
+# So far we compared:
+# - base Qwen3-0.6B (no context),
+# - base Qwen3-0.6B + RAG context,
+# - llama3.3 + RAG context.
+#
+# To see whether domain-specific fine-tuning helps *in addition* to RAG, we can
+# re-use the LoRA/DoRA configuration from the finetuning tutorial and train a
+# lightweight adapter on the Orange QA training set, then evaluate with the
+# same RAG-augmented MCQ datasets.
+#
+# This step can be GPU-intensive and is therefore optional; run it only if you
+# have enough resources.
+
+# %%
+from datasets import load_dataset
+from transformers import TrainingArguments
+from peft import LoraConfig, IA3Config, get_peft_model
+from trl import SFTTrainer
+
+FT_CONFIG = {
+    "use_dora": True,
+    "n_epochs": 1,
+    "lora_r": 8,
+    "lora_alpha": 16,
+    "lr": 5e-4,
+    "batch_size": MODEL_CONFIG["batch_size"],
+    "lora_projections": "qvko",
+    "lora_dropout": 0.05,
+    "use_ia3": False,
+}
+
+PROJECTIONS = {
+    "q": "q_proj",
+    "k": "k_proj",
+    "v": "v_proj",
+    "o": "o_proj",
+    "g": "gate_proj",
+    "d": "down_proj",
+    "u": "up_proj",
+}
+target_modules = [PROJECTIONS[p] for p in list(FT_CONFIG["lora_projections"])]
+
+print("Setting up LoRA/DoRA configuration for fine-tuning...")
+peft_config = LoraConfig(
+    bias="none",
+    task_type="CAUSAL_LM",
+    target_modules=target_modules,
+    use_dora=FT_CONFIG["use_dora"],
+    r=FT_CONFIG["lora_r"],
+    lora_alpha=FT_CONFIG["lora_alpha"],
+    lora_dropout=FT_CONFIG["lora_dropout"],
+)
+if FT_CONFIG["use_ia3"]:
+    peft_config = IA3Config(
+        peft_type="IA3",
+        task_type="CAUSAL_LM",
+        target_modules=target_modules,
+    )
+
+ft_model = get_peft_model(model, peft_config)
+
+train_data_path = os.path.join(DATA_DIR, "orange_qa_train.jsonl")
+print(f"Loading training data from {train_data_path} ...")
+train_dataset = load_dataset("json", data_files=train_data_path, split="train")
+
+ft_output_dir = os.path.join(PROJECT_ROOT, "models", "Qwen3-0.6B_DoRA_qvko_r8_alpha16_rag")
+training_args = TrainingArguments(
+    output_dir=ft_output_dir,
+    num_train_epochs=FT_CONFIG["n_epochs"],
+    per_device_train_batch_size=FT_CONFIG["batch_size"],
+    gradient_accumulation_steps=1,
+    learning_rate=FT_CONFIG["lr"],
+    fp16=True,
+    logging_steps=10,
+    optim="adamw_torch",
+    save_strategy="epoch",
+    report_to=[],  # disable wandb by default in this notebook
+)
+
+trainer = SFTTrainer(
+    model=ft_model,
+    train_dataset=train_dataset,
+    args=training_args,
+    processing_class=tokenizer,
+)
+
+print("Starting fine-tuning (this may take a while)...")
+trainer.train()
+print("Fine-tuning complete.")
+
+# %%
+print("Evaluating fine-tuned Qwen3-0.6B with RAG context on MCQ...")
+accuracy_mcq_rag_ft, se_mcq_rag_ft = evaluate_model(ft_model, tokenizer, rag_mcq_dataset, batch_size=FT_CONFIG['batch_size'])
+print(f"Fine-tuned MCQ with RAG: accuracy={accuracy_mcq_rag_ft:.1f}%, SE={se_mcq_rag_ft:.2f}")
+
+print("\nEvaluating fine-tuned Qwen3-0.6B with RAG context on MCQ-con...")
+accuracy_mcq_con_rag_ft, se_mcq_con_rag_ft = evaluate_model(ft_model, tokenizer, rag_mcq_con_dataset, batch_size=FT_CONFIG['batch_size'])
+print(f"Fine-tuned MCQ-con with RAG: accuracy={accuracy_mcq_con_rag_ft:.1f}%, SE={se_mcq_con_rag_ft:.2f}")
 
 # %% [markdown]
-# ### 2.6 Summary
+# ### 2.7 Summary
 #
 # | Setting | MCQ Accuracy | MCQ-con Accuracy |
 # |---|---|---|
 # | Qwen3-0.6B (no context) | 5.0% | 13.5% |
 # | Qwen3-0.6B + RAG context | *run above* | *run above* |
+# | Qwen3-0.6B + RAG context (fine-tuned) | *run above* | *run above* |
 # | llama3.3 + RAG context | *run above* | *run above* |
-# | Qwen3-0.6B + LoRA fine-tuning (for reference) | 64.0% | 13.5% |
+# | Qwen3-0.6B + LoRA fine-tuning (no RAG, reference) | 64.0% | 13.5% |
 
 # %%
-print("=" * 65)
-print(f"{'Setting':<35} {'MCQ':>10} {'MCQ-con':>10}")
-print("-" * 65)
-print(f"{'Qwen3-0.6B (no context)':<35} {'5.0%':>10} {'13.5%':>10}")
-print(f"{'Qwen3-0.6B + RAG context':<35} {accuracy_mcq_rag:>9.1f}% {accuracy_mcq_con_rag:>9.1f}%")
-print(f"{'llama3.3 + RAG context':<35} {acc_llama_mcq:>9.1f}% {acc_llama_mcq_con:>9.1f}%")
-print(f"{'Qwen3-0.6B + LoRA (reference)':<35} {'64.0%':>10} {'13.5%':>10}")
-print("=" * 65)
+print("=" * 75)
+print(f"{'Setting':<45} {'MCQ':>10} {'MCQ-con':>10}")
+print("-" * 75)
+print(f"{'Qwen3-0.6B (no context)':<45} {'5.0%':>10} {'13.5%':>10}")
+print(f"{'Qwen3-0.6B + RAG context':<45} {accuracy_mcq_rag:>9.1f}% {accuracy_mcq_con_rag:>9.1f}%")
+print(f"{'Qwen3-0.6B + RAG context (fine-tuned)':<45} {accuracy_mcq_rag_ft:>9.1f}% {accuracy_mcq_con_rag_ft:>9.1f}%")
+print(f"{'llama3.3 + RAG context':<45} {acc_llama_mcq:>9.1f}% {acc_llama_mcq_con:>9.1f}%")
+print(f"{'Qwen3-0.6B + LoRA (no RAG, reference)':<45} {'64.0%':>10} {'13.5%':>10}")
+print("=" * 75)
+
+# %%
