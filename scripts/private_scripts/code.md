@@ -14,9 +14,11 @@ python scripts/shared_scripts/index/build_bm25_index_from_jsonl_shards.py \
   --threads 4 \
   --overwrite
 
-python scripts/public/shared_scripts/index/build_dense_hnsw_index_from_jsonl_shards.py \
+python scripts/shared_scripts/index/build_dense_hnsw_index_from_jsonl_shards.py \
   --jsonl_glob "data/orange_docs_chunks.jsonl" \
-  --out_dir "index/" \
+  --out_dir "index/bg3_m3" \
+  --model_name "BAAI/bge-m3" \
   --device "mps" \
-  --batch_size 64 \
+  --batch_size 8 \
   --dedup_pmids 
+
