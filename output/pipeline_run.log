@@ -8,3 +8,15 @@
 2026-03-20 12:35:38 step 1 BM25 skip
 2026-03-20 12:35:38 step 2 Dense skip
 2026-03-20 12:35:38 step 3 Hybrid skip
+2026-03-20 11:42:31 start steps=5 out=/work/output/ config=scripts/private_scripts/config.env RUN_SNIPPET_RRF=0
+2026-03-20 11:42:31 step 1 BM25 skip
+2026-03-20 11:42:31 step 2 Dense skip
+2026-03-20 11:42:31 step 3 Hybrid skip
+2026-03-20 11:44:19 start steps=5 out=/work/output/ config=scripts/private_scripts/config.env RUN_SNIPPET_RRF=0
+2026-03-20 11:44:19 step 1 BM25 skip
+2026-03-20 11:44:19 step 2 Dense skip
+2026-03-20 11:44:19 step 3 Hybrid skip
+2026-03-20 12:10:46 step 4 Reranker 1587s
+2026-03-20 12:10:48 step 5 RRF 2s
+2026-03-20 12:10:50 step Compare 2s
+2026-03-20 12:10:50 step Compare200 skip (condition)

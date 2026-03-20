@@ -208,15 +208,15 @@ def load_run_tsv(path, columns=None):
         df['score'] = pd.to_numeric(df['score'], errors='coerce')
     return df
 
-bm25_runs = load_run_tsv(os.path.join(OUTPUT_DIR, 'bm25/runs/BM25__orange_qa_MCQ_test_bioasq__top80.tsv'))
+bm25_runs = load_run_tsv(os.path.join(OUTPUT_DIR, 'bm25/runs/BM25__orange_qa_MCQ_test_bioasq__top400.tsv'))
 dense_runs = load_run_tsv(os.path.join(OUTPUT_DIR, 'dense/runs/dense_orange_qa_MCQ_test_bioasq.tsv'))
 hybrid_runs = load_run_tsv(
-    os.path.join(OUTPUT_DIR, 'hybrid/runs/best_rrf_orange_qa_MCQ_test_bioasq_top80.tsv'),
+    os.path.join(OUTPUT_DIR, 'hybrid/runs/best_rrf_orange_qa_MCQ_test_bioasq_top400.tsv'),
     columns=['qid', 'rank', 'docno', 'score'],
 )
-rerank_runs = load_run_tsv(os.path.join(OUTPUT_DIR, 'rerank/runs/best_rrf_orange_qa_MCQ_test_bioasq_top80.tsv'))
+rerank_runs = load_run_tsv(os.path.join(OUTPUT_DIR, 'rerank/runs/best_rrf_orange_qa_MCQ_test_bioasq_top400.tsv'))
 rerank_hybrid_runs = load_run_tsv(
-    os.path.join(OUTPUT_DIR, 'rerank_hybrid/runs/best_rrf_orange_qa_MCQ_test_bioasq_top80_rrf_poolR50_poolH50_k60.tsv'),
+    os.path.join(OUTPUT_DIR, 'rerank_hybrid/runs/best_rrf_orange_qa_MCQ_test_bioasq_top400_rrf_poolR50_poolH50_k60.tsv'),
     columns=['qid', 'docno', 'rank'],
 )
 
@@ -260,11 +260,11 @@ for q in bioasq_data['questions']:
 print(f"Ground-truth loaded: {len(gold_map)} questions with documents")
 
 run_files = {
-    'BM25': os.path.join(OUTPUT_DIR, 'bm25/runs/BM25__orange_qa_MCQ_test_bioasq__top80.tsv'),
+    'BM25': os.path.join(OUTPUT_DIR, 'bm25/runs/BM25__orange_qa_MCQ_test_bioasq__top400.tsv'),
     'Dense': os.path.join(OUTPUT_DIR, 'dense/runs/dense_orange_qa_MCQ_test_bioasq.tsv'),
-    'Hybrid': os.path.join(OUTPUT_DIR, 'hybrid/runs/best_rrf_orange_qa_MCQ_test_bioasq_top80.tsv'),
-    'Rerank': os.path.join(OUTPUT_DIR, 'rerank/runs/best_rrf_orange_qa_MCQ_test_bioasq_top80.tsv'),
-    'Rerank+Hybrid': os.path.join(OUTPUT_DIR, 'rerank_hybrid/runs/best_rrf_orange_qa_MCQ_test_bioasq_top80_rrf_poolR50_poolH50_k60.tsv'),
+    'Hybrid': os.path.join(OUTPUT_DIR, 'hybrid/runs/best_rrf_orange_qa_MCQ_test_bioasq_top400.tsv'),
+    'Rerank': os.path.join(OUTPUT_DIR, 'rerank/runs/best_rrf_orange_qa_MCQ_test_bioasq_top400.tsv'),
+    # 'Rerank+Hybrid': os.path.join(OUTPUT_DIR, 'rerank_hybrid/runs/best_rrf_orange_qa_MCQ_test_bioasq_top400_rrf_poolR50_poolH50_k60.tsv'),
 }
 
 run_dfs = {}
@@ -288,7 +288,7 @@ def compute_mrr(runs_df, gold_map, k):
     return np.mean(scores)
 
 
-ks = [1, 3, 5, 10, 20]
+ks = [1, 2, 3, 5, 10]
 mrr_results = {
     name: [compute_mrr(df, gold_map, k) for k in ks]
     for name, df in run_dfs.items()
@@ -304,7 +304,7 @@ ax.set_title('MRR@k by Retrieval Stage (MCQ)')
 ax.set_xticks(ks)
 ax.legend()
 ax.grid(True, alpha=0.3)
-ax.set_ylim(0, 1.05)
+ax.set_ylim(0.8, 1.05)
 plt.tight_layout()
 plt.show()
 
@@ -314,6 +314,55 @@ print("-" * (20 + 8 * len(ks)))
 for name in run_dfs:
     mrr_vals = " ".join(f"{v:7.3f}" for v in mrr_results[name])
     print(f"{name:<20} {mrr_vals}")
+
+# %%
+def compute_mean_recall(runs_df, gold_map, k):
+    """Mean Recall@k: average fraction of relevant docs found in the top-k."""
+    scores = []
+    for qid, gold_docs in gold_map.items():
+        ranked = runs_df[runs_df['qid'] == qid].sort_values('rank')['docno'].tolist()[:k]
+        n_found = sum(1 for d in ranked if d in gold_docs)
+        scores.append(n_found / len(gold_docs) if gold_docs else 0.0)
+    return np.mean(scores)
+
+recall_ks = [1, 3, 5, 10, 20, 50, 100]
+recall_results = {
+    name: [compute_mean_recall(df, gold_map, k) for k in recall_ks]
+    for name, df in run_dfs.items()
+}
+
+fig, ax = plt.subplots(figsize=(8, 5))
+for name, values in recall_results.items():
+    ax.plot(recall_ks, values, marker='o', label=name)
+ax.set_xlabel('k')
+ax.set_ylabel('Mean Recall@k')
+ax.set_title('Mean Recall@k by Retrieval Stage (MCQ)')
+ax.set_xscale('log')
+ax.set_xticks(recall_ks)
+ax.get_xaxis().set_major_formatter(plt.ScalarFormatter())
+ax.legend()
+ax.grid(True, alpha=0.3)
+ax.set_ylim(0.8, 1.02)
+plt.tight_layout()
+plt.show()
+
+# %%
+print(f"{'Method':<20} " + " ".join(f"{'R@'+str(k):>7}" for k in recall_ks))
+print("-" * (20 + 8 * len(recall_ks)))
+for name in run_dfs:
+    recall_vals = " ".join(f"{v:7.3f}" for v in recall_results[name])
+    print(f"{name:<20} {recall_vals}")
+
+
+# %% [markdown]
+# ### 2.2 Example 1: BM25 vs Dense vs Hybrid
+#
+# *"What is the source of the data in GEO Data Sets?"*
+#
+# BM25 ranks `vp-sqltable-3` (about SQL/PostgreSQL) first -- a keyword match
+# on the wrong domain. Dense retrieval correctly surfaces `bio-geo-data-sets-1`.
+# Hybrid (RRF) also ranks the correct chunk first, showing how the dense signal
+# can rescue the result despite BM25's keyword mismatch.
 
 # %%
 def get_top_hits(runs_df, qid, n=5):
@@ -366,16 +415,6 @@ def get_mcq_prompt_with_choices(qid, dataset):
     except Exception:
         raise ValueError(f"Unexpected qid format: {qid}")
     return dataset[idx]["messages"][1]["content"]
-
-# %% [markdown]
-# ### 2.2 Example 1: BM25 vs Dense vs Hybrid
-#
-# *"What is the source of the data in GEO Data Sets?"*
-#
-# BM25 ranks `vp-sqltable-3` (about SQL/PostgreSQL) first -- a keyword match
-# on the wrong domain. Dense retrieval correctly surfaces `bio-geo-data-sets-1`.
-# Hybrid (RRF) also ranks the correct chunk first, showing how the dense signal
-# can rescue the result despite BM25's keyword mismatch.
 
 # %%
 qid_ex1 = "orange_qa_MCQ_test_19"
