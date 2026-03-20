@@ -79,6 +79,7 @@ print(f"Project root: {PROJECT_ROOT}")
 # %%
 import json
 import textwrap
+import importlib.util
 
 import torch
 import numpy as np
@@ -86,7 +87,13 @@ import pandas as pd
 from pathlib import Path
 from transformers import AutoTokenizer, AutoModelForCausalLM
 
-from evaluation_function import evaluate_model
+# Load this repo's evaluator explicitly (avoids wrong module on sys.path).
+_eval_path = os.path.join(PROJECT_ROOT, "src", "evaluation_function.py")
+_eval_spec = importlib.util.spec_from_file_location("rag_orange_evaluation_function", _eval_path)
+_evaluation_function = importlib.util.module_from_spec(_eval_spec)
+_eval_spec.loader.exec_module(_evaluation_function)
+evaluate_model = _evaluation_function.evaluate_model
+print(f"Loaded evaluate_model from: {_eval_path}")
 
 # %% [markdown]
 # ## PART 1: Baseline Evaluation with Qwen3-0.6B
@@ -262,7 +269,7 @@ print(f"Ground-truth loaded: {len(gold_map)} questions with documents")
 run_files = {
     'BM25': os.path.join(OUTPUT_DIR, 'bm25/runs/BM25__orange_qa_MCQ_test_bioasq__top400.tsv'),
     'Dense': os.path.join(OUTPUT_DIR, 'dense/runs/dense_orange_qa_MCQ_test_bioasq.tsv'),
-    'Hybrid': os.path.join(OUTPUT_DIR, 'hybrid/runs/best_rrf_orange_qa_MCQ_test_bioasq_top400.tsv'),
+    'BM25+Dense Fusion': os.path.join(OUTPUT_DIR, 'hybrid/runs/best_rrf_orange_qa_MCQ_test_bioasq_top400.tsv'),
     'Rerank': os.path.join(OUTPUT_DIR, 'rerank/runs/best_rrf_orange_qa_MCQ_test_bioasq_top400.tsv'),
     # 'Rerank+Hybrid': os.path.join(OUTPUT_DIR, 'rerank_hybrid/runs/best_rrf_orange_qa_MCQ_test_bioasq_top400_rrf_poolR50_poolH50_k60.tsv'),
 }
@@ -325,10 +332,11 @@ def compute_mean_recall(runs_df, gold_map, k):
         scores.append(n_found / len(gold_docs) if gold_docs else 0.0)
     return np.mean(scores)
 
-recall_ks = [1, 3, 5, 10, 20, 50, 100]
+recall_ks = [1, 3, 5, 10, 20, 50]
+recall_methods = ['BM25', 'Dense', 'BM25+Dense Fusion']
 recall_results = {
-    name: [compute_mean_recall(df, gold_map, k) for k in recall_ks]
-    for name, df in run_dfs.items()
+    name: [compute_mean_recall(run_dfs[name], gold_map, k) for k in recall_ks]
+    for name in recall_methods
 }
 
 fig, ax = plt.subplots(figsize=(8, 5))
@@ -342,14 +350,14 @@ ax.set_xticks(recall_ks)
 ax.get_xaxis().set_major_formatter(plt.ScalarFormatter())
 ax.legend()
 ax.grid(True, alpha=0.3)
-ax.set_ylim(0.8, 1.02)
+ax.set_ylim(0.4, 1.02)
 plt.tight_layout()
 plt.show()
 
 # %%
 print(f"{'Method':<20} " + " ".join(f"{'R@'+str(k):>7}" for k in recall_ks))
 print("-" * (20 + 8 * len(recall_ks)))
-for name in run_dfs:
+for name in recall_methods:
     recall_vals = " ".join(f"{v:7.3f}" for v in recall_results[name])
     print(f"{name:<20} {recall_vals}")
 
@@ -502,6 +510,21 @@ print(f"llama3.3 + RAG context (MCQ-con): {acc_llama_mcq_con:.1f}% ({correct_mcq
 # into the MCQ user prompts and let Qwen3-0.6B answer. The helper
 # `build_rag_eval_dataset` prepends a `Context:` block (built from the top-k
 # retrieved chunks) to each user message.
+#
+# **How `top_k` relates to the pipeline JSONs:** Each question in
+# `evidence_baseline/*_contexts.json` has a `contexts` array (often longer than
+# three; retrieval may return many chunks). `build_rag_eval_dataset(...,
+# top_k=N)` **automatically keeps only the first N entries** in that array --
+# same retrieval order, so `top_k=1` is only `[1]`, and `top_k=2` is `[1]`,
+# `[2]`. You could pass `generation_baseline/*_answers.json` instead
+# (same `questions` / `contexts` shape); `load_contexts` supports both.
+#
+# The files under `generation_baseline_converted/` are **already** chat-style
+# JSON with context blocks baked into the user text (often produced with
+# `build_rag_eval_dataset.py --top-k 2` or `--top-k 3` in your pipeline).
+# Qwen is **not** evaluated on those files directly; we rebuild prompts from
+# `evidence_baseline` so `top_k=2` uses the top two ranked chunks and
+# `top_k=1` isolates the single best-ranked chunk.
 
 # %%
 from build_rag_eval_dataset import build_rag_eval_dataset
@@ -509,7 +532,7 @@ from build_rag_eval_dataset import build_rag_eval_dataset
 evidence_mcq_path = Path(OUTPUT_DIR) / 'evidence_baseline' / 'orange_qa_MCQ_test_bioasq_contexts.json'
 evidence_mcq_con_path = Path(OUTPUT_DIR) / 'evidence_baseline' / 'orange_qa_MCQ-con_test_bioasq_contexts.json'
 
-# Build RAG-augmented datasets for top_k=1 and top_k=3.
+# Build RAG-augmented datasets for top_k=1 and top_k=2.
 rag_mcq_dataset_k1 = build_rag_eval_dataset(
     contexts_path=evidence_mcq_path,
     original_mcq_path=Path(TESTDATA_MCQ_FILE),
@@ -525,20 +548,20 @@ rag_mcq_con_dataset_k1 = build_rag_eval_dataset(
 rag_mcq_dataset = build_rag_eval_dataset(
     contexts_path=evidence_mcq_path,
     original_mcq_path=Path(TESTDATA_MCQ_FILE),
-    top_k=3,
+    top_k=2,
     restrict_to_contexts=False,
 )
 rag_mcq_con_dataset = build_rag_eval_dataset(
     contexts_path=evidence_mcq_con_path,
     original_mcq_path=Path(TESTDATA_MCQ_CON_FILE),
-    top_k=3,
+    top_k=2,
     restrict_to_contexts=False,
 )
 
 print(f"RAG-augmented MCQ (top_k=1): {len(rag_mcq_dataset_k1)} questions")
 print(f"RAG-augmented MCQ-con (top_k=1): {len(rag_mcq_con_dataset_k1)} questions")
-print(f"RAG-augmented MCQ (top_k=3): {len(rag_mcq_dataset)} questions")
-print(f"RAG-augmented MCQ-con (top_k=3): {len(rag_mcq_con_dataset)} questions")
+print(f"RAG-augmented MCQ (top_k=2): {len(rag_mcq_dataset)} questions")
+print(f"RAG-augmented MCQ-con (top_k=2): {len(rag_mcq_con_dataset)} questions")
 
 # %% [markdown]
 # The original MCQ prompts tell the model to answer *"based on your knowledge"*.
@@ -648,18 +671,39 @@ def debug_qwen_outputs(sample_dataset, num_examples=5):
 
 # %%
 # Uncomment to inspect raw generations (try rag_mcq_dataset_k1 or test_mcq_dataset too):
-# debug_qwen_outputs(rag_mcq_dataset, num_examples=5)
+debug_qwen_outputs(rag_mcq_dataset, num_examples=1)
+
+# %% [markdown]
+# #### Strict vs lenient accuracy
+#
+# The prompt instructs the model to answer with a **single letter** (A, B, C,
+# or D). In practice, Qwen3-0.6B sometimes produces a correct but verbose
+# reply such as *"D: Yes, as .svg or .png"* -- it picked the right option yet
+# fails strict exact-match against the gold label "D".
+#
+# We therefore report two accuracy numbers:
+#
+# - **Strict** -- the full generated text must equal the gold letter exactly.
+# - **Lenient** -- we extract only the leading answer letter (A–D) from the
+#   model output before comparing.
+#
+# The gap between the two reveals how often the model identifies the correct
+# answer but does not follow the formatting instruction.
 
 # %%
 print("Evaluating Qwen3-0.6B with RAG context (top_k=1)...")
-accuracy_mcq_rag_k1, se_mcq_rag_k1 = evaluate_model(model, tokenizer, rag_mcq_dataset_k1, batch_size=MODEL_CONFIG['batch_size'])
+accuracy_mcq_rag_k1, se_mcq_rag_k1, lenient_mcq_rag_k1, lenient_se_mcq_rag_k1 = evaluate_model(
+    model, tokenizer, rag_mcq_dataset_k1, batch_size=MODEL_CONFIG['batch_size'], return_lenient=True,
+)
 accuracy_mcq_con_rag_k1, se_mcq_con_rag_k1 = evaluate_model(model, tokenizer, rag_mcq_con_dataset_k1, batch_size=MODEL_CONFIG['batch_size'])
-print(f"  MCQ: {accuracy_mcq_rag_k1:.1f}%, MCQ-con: {accuracy_mcq_con_rag_k1:.1f}%")
+print(f"  MCQ: {accuracy_mcq_rag_k1:.1f}% (lenient {lenient_mcq_rag_k1:.1f}%), MCQ-con: {accuracy_mcq_con_rag_k1:.1f}%")
 
-print("\nEvaluating Qwen3-0.6B with RAG context (top_k=3)...")
-accuracy_mcq_rag, se_mcq_rag = evaluate_model(model, tokenizer, rag_mcq_dataset, batch_size=MODEL_CONFIG['batch_size'])
+print("\nEvaluating Qwen3-0.6B with RAG context (top_k=2)...")
+accuracy_mcq_rag, se_mcq_rag, lenient_mcq_rag, lenient_se_mcq_rag = evaluate_model(
+    model, tokenizer, rag_mcq_dataset, batch_size=MODEL_CONFIG['batch_size'], return_lenient=True,
+)
 accuracy_mcq_con_rag, se_mcq_con_rag = evaluate_model(model, tokenizer, rag_mcq_con_dataset, batch_size=MODEL_CONFIG['batch_size'])
-print(f"  MCQ: {accuracy_mcq_rag:.1f}%, MCQ-con: {accuracy_mcq_con_rag:.1f}%")
+print(f"  MCQ: {accuracy_mcq_rag:.1f}% (lenient {lenient_mcq_rag:.1f}%), MCQ-con: {accuracy_mcq_con_rag:.1f}%")
 
 # %% [markdown]
 # ### 2.6 Fine-tuned Qwen3-0.6B + RAG (optional)
@@ -758,8 +802,10 @@ print("Fine-tuning complete.")
 
 # %%
 print("Evaluating fine-tuned Qwen3-0.6B with RAG context on MCQ...")
-accuracy_mcq_rag_ft, se_mcq_rag_ft = evaluate_model(ft_model, tokenizer, rag_mcq_dataset, batch_size=FT_CONFIG['batch_size'])
-print(f"Fine-tuned MCQ with RAG: accuracy={accuracy_mcq_rag_ft:.1f}%, SE={se_mcq_rag_ft:.2f}")
+accuracy_mcq_rag_ft, se_mcq_rag_ft, lenient_mcq_rag_ft, lenient_se_mcq_rag_ft = evaluate_model(
+    ft_model, tokenizer, rag_mcq_dataset, batch_size=FT_CONFIG['batch_size'], return_lenient=True,
+)
+print(f"Fine-tuned MCQ with RAG: accuracy={accuracy_mcq_rag_ft:.1f}% (lenient {lenient_mcq_rag_ft:.1f}%), SE={se_mcq_rag_ft:.2f}")
 
 print("\nEvaluating fine-tuned Qwen3-0.6B with RAG context on MCQ-con...")
 accuracy_mcq_con_rag_ft, se_mcq_con_rag_ft = evaluate_model(ft_model, tokenizer, rag_mcq_con_dataset, batch_size=FT_CONFIG['batch_size'])
@@ -769,19 +815,25 @@ print(f"Fine-tuned MCQ-con with RAG: accuracy={accuracy_mcq_con_rag_ft:.1f}%, SE
 # ### 2.7 Summary
 #
 # The table below collects all settings evaluated in this tutorial.
-# The base model is tested with RAG at top_k = 1 and top_k = 3; the
-# fine-tuned variant uses top_k = 3 only.
+# The base model is tested with RAG at top_k = 1 and top_k = 2; the
+# fine-tuned variant uses top_k = 2 only.
+#
+# For the RAG settings we also show **lenient MCQ accuracy**: the model
+# chose the right option letter but added extra text (e.g. *"D: Yes, as
+# .svg"*), so strict exact-match fails while the answer is effectively
+# correct. The gap highlights how often the small model struggles with
+# formatting instructions rather than knowledge.
 
 # %%
-print("=" * 75)
-print(f"{'Setting':<45} {'MCQ':>10} {'MCQ-con':>10}")
-print("-" * 75)
-print(f"{'Qwen3-0.6B (no context)':<45} {'5.0%':>10} {'13.5%':>10}")
-print(f"{'Qwen3-0.6B + LoRA (no RAG)':<45} {'64.0%':>10} {'13.5%':>10}")
-print(f"{'Qwen3-0.6B + RAG (top_k=1)':<45} {accuracy_mcq_rag_k1:>9.1f}% {accuracy_mcq_con_rag_k1:>9.1f}%")
-print(f"{'Qwen3-0.6B + RAG (top_k=3)':<45} {accuracy_mcq_rag:>9.1f}% {accuracy_mcq_con_rag:>9.1f}%")
-print(f"{'Qwen3-0.6B + RAG (fine-tuned, top_k=3)':<45} {accuracy_mcq_rag_ft:>9.1f}% {accuracy_mcq_con_rag_ft:>9.1f}%")
-print(f"{'llama3.3 + RAG context':<45} {acc_llama_mcq:>9.1f}% {acc_llama_mcq_con:>9.1f}%")
-print("=" * 75)
+print("=" * 90)
+print(f"{'Setting':<45} {'MCQ':>10} {'Lenient':>10} {'MCQ-con':>10}")
+print("-" * 90)
+print(f"{'Qwen3-0.6B (no context)':<45} {'5.0%':>10} {'—':>10} {'13.5%':>10}")
+print(f"{'Qwen3-0.6B + LoRA (no RAG)':<45} {'64.0%':>10} {'—':>10} {'13.5%':>10}")
+print(f"{'Qwen3-0.6B + RAG (top_k=1)':<45} {accuracy_mcq_rag_k1:>9.1f}% {lenient_mcq_rag_k1:>9.1f}% {accuracy_mcq_con_rag_k1:>9.1f}%")
+print(f"{'Qwen3-0.6B + RAG (top_k=2)':<45} {accuracy_mcq_rag:>9.1f}% {lenient_mcq_rag:>9.1f}% {accuracy_mcq_con_rag:>9.1f}%")
+print(f"{'Qwen3-0.6B + RAG (fine-tuned, top_k=2)':<45} {accuracy_mcq_rag_ft:>9.1f}% {lenient_mcq_rag_ft:>9.1f}% {accuracy_mcq_con_rag_ft:>9.1f}%")
+print(f"{'llama3.3 + RAG context':<45} {acc_llama_mcq:>9.1f}% {'—':>10} {acc_llama_mcq_con:>9.1f}%")
+print("=" * 90)
 
 # %%

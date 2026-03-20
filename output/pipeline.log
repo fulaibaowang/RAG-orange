@@ -1,0 +1,20 @@
+2026-03-20 12:41:30 [WARNING] __main__: LLM call failed after 3 attempts for id=orange_qa_MCQ-con_test_3: mcq exact_answer must be a string or a non-empty list of strings
+2026-03-20 12:50:20 [WARNING] __main__: LLM call failed after 3 attempts for id=orange_qa_MCQ-con_test_61: mcq exact_answer must be a string or a non-empty list of strings
+2026-03-20 12:50:24 [WARNING] __main__: LLM call failed after 3 attempts for id=orange_qa_MCQ-con_test_62: mcq exact_answer must be a string or a non-empty list of strings
+2026-03-20 12:51:44 [WARNING] __main__: LLM call failed after 3 attempts for id=orange_qa_MCQ-con_test_72: mcq exact_answer must be a string or a non-empty list of strings
+2026-03-20 13:01:56 [WARNING] __main__: LLM call failed after 3 attempts for id=orange_qa_MCQ-con_test_139: mcq exact_answer must be a string or a non-empty list of strings
+2026-03-20 13:11:32 [INFO] __main__: Wrote 200 records to /work/output/generation_baseline/orange_qa_MCQ-con_test_bioasq_answers.json
+2026-03-20 13:11:32 [INFO] __main__: Found 5 failed record(s) to rescue (only-504=False).
+2026-03-20 13:11:32 [INFO] __main__:   id=orange_qa_MCQ-con_test_3 error=mcq exact_answer must be a string or a non-empty list of strings
+2026-03-20 13:11:32 [INFO] __main__:   id=orange_qa_MCQ-con_test_61 error=mcq exact_answer must be a string or a non-empty list of strings
+2026-03-20 13:11:32 [INFO] __main__:   id=orange_qa_MCQ-con_test_62 error=mcq exact_answer must be a string or a non-empty list of strings
+2026-03-20 13:11:32 [INFO] __main__:   id=orange_qa_MCQ-con_test_72 error=mcq exact_answer must be a string or a non-empty list of strings
+2026-03-20 13:11:32 [INFO] __main__:   id=orange_qa_MCQ-con_test_139 error=mcq exact_answer must be a string or a non-empty list of strings
+2026-03-20 13:11:32 [INFO] __main__: Running: /usr/bin/python /work/scripts/shared_scripts/generation/generate_answers.py --input-path /tmp/rescue_gen_1cw50o2p/rescue_contexts.json --output-dir /tmp/rescue_gen_1cw50o2p/out --timeout 300 --retry-sleep 60 --max-chars-per-context 2000 --concurrency 1
+2026-03-20 13:11:44 [INFO] __main__: Generation progress: 1/5
+2026-03-20 13:12:32 [INFO] __main__: Generation progress: 5/5
+2026-03-20 13:12:32 [INFO] __main__: Wrote 5 records to /tmp/rescue_gen_1cw50o2p/out/rescue_answers.json
+2026-03-20 13:12:32 [INFO] __main__: Replaced 5 record(s) with rescued results.
+2026-03-20 13:12:32 [INFO] __main__: Wrote 200 records to /work/output/generation_baseline/orange_qa_MCQ-con_test_bioasq_answers.json
+2026-03-20 13:40:37 [INFO] __main__: Wrote 200 records to /work/output/generation_baseline/orange_qa_MCQ_test_bioasq_answers.json
+2026-03-20 13:40:37 [INFO] __main__: No failed records to rescue (only-504=False).

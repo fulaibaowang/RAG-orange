@@ -1,0 +1,10 @@
+2026-03-20 12:40:48 start steps=5 out=/work/output/ config=scripts/private_scripts/config.env RUN_SNIPPET_RRF=0
+2026-03-20 12:40:48 step 1 BM25 skip
+2026-03-20 12:40:48 step 2 Dense skip
+2026-03-20 12:40:48 step 3 Hybrid skip
+2026-03-20 12:40:48 step 4 Reranker 0s
+2026-03-20 12:40:48 step 5 RRF 0s
+2026-03-20 12:40:48 step Compare skip
+2026-03-20 12:40:48 step Compare200 skip (condition)
+2026-03-20 13:40:37 step EvidenceGen 3589s
+2026-03-20 13:40:37 end
