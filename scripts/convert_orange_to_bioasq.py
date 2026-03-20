@@ -36,19 +36,55 @@ import argparse
 import json
 import sys
 from pathlib import Path
-from typing import Any, Dict, List
+from typing import Any, Dict, List, Optional, Tuple
 
 
-def convert_mcq_to_bioasq(input_path: Path) -> Dict[str, List[Dict[str, Any]]]:
-    """Load MCQ JSON array and convert to BioASQ-style questions dict."""
+def _build_ground_truth_maps(
+    qa_full_path: Path,
+    chunks_path: Path,
+) -> Tuple[Dict[str, str], Dict[str, List[str]]]:
+    """Return (question_to_file, sourcepath_to_pmids) for ground-truth lookup."""
+    with qa_full_path.open("r", encoding="utf-8") as f:
+        qa_full = json.load(f)
+    question_to_file: Dict[str, str] = {}
+    for entry in qa_full:
+        question_to_file[entry["question"].strip()] = entry["file"]
+
+    sourcepath_to_pmids: Dict[str, List[str]] = {}
+    with chunks_path.open("r", encoding="utf-8") as f:
+        for line in f:
+            chunk = json.loads(line)
+            sourcepath_to_pmids.setdefault(chunk["source_path"], []).append(chunk["pmid"])
+
+    return question_to_file, sourcepath_to_pmids
+
+
+def convert_mcq_to_bioasq(
+    input_path: Path,
+    qa_full_path: Optional[Path] = None,
+    chunks_path: Optional[Path] = None,
+) -> Dict[str, List[Dict[str, Any]]]:
+    """Load MCQ JSON array and convert to BioASQ-style questions dict.
+
+    When *qa_full_path* and *chunks_path* are provided, each output question
+    gets a ``documents`` list of chunk pmids derived from the source file.
+    """
     with input_path.open("r", encoding="utf-8") as f:
         data = json.load(f)
 
     if not isinstance(data, list):
         raise ValueError(f"Expected top-level list in {input_path}, got {type(data)}")
 
+    question_to_file: Dict[str, str] = {}
+    sourcepath_to_pmids: Dict[str, List[str]] = {}
+    if qa_full_path and chunks_path:
+        question_to_file, sourcepath_to_pmids = _build_ground_truth_maps(
+            qa_full_path, chunks_path,
+        )
+
     stem = input_path.stem
     questions: List[Dict[str, Any]] = []
+    docs_matched = 0
 
     for i, item in enumerate(data):
         msgs = item.get("messages") or []
@@ -57,7 +93,6 @@ def convert_mcq_to_bioasq(input_path: Path) -> Dict[str, List[Dict[str, Any]]]:
 
         user_msg = msgs[1]
         if user_msg.get("role") != "user":
-            # Be tolerant but log via stderr
             print(
                 f"Warning: item {i} user message has role={user_msg.get('role')!r}, "
                 f"expected 'user'",
@@ -78,7 +113,6 @@ def convert_mcq_to_bioasq(input_path: Path) -> Dict[str, List[Dict[str, Any]]]:
             if q_idx != -1 and a_idx != -1:
                 question_only = raw_content[q_idx + len(q_marker) : a_idx].strip()
             else:
-                # Fall back to full prompt if we cannot cleanly parse markers.
                 question_only = full_prompt
                 print(
                     f"Warning: item {i} in {input_path} is missing expected 'Question:'/'Answers:' markers; "
@@ -95,14 +129,40 @@ def convert_mcq_to_bioasq(input_path: Path) -> Dict[str, List[Dict[str, Any]]]:
 
         qid = f"{stem}_{i}"
 
-        questions.append(
-            {
-                "id": qid,
-                "body": full_prompt,
-                "body_query": question_only,
-                # Explicitly mark all Orange QA items as multiple-choice questions.
-                "type": "MCQ",
-            }
+        q_obj: Dict[str, Any] = {
+            "id": qid,
+            "body": full_prompt,
+            "body_query": question_only,
+            "type": "MCQ",
+        }
+
+        if question_to_file:
+            src_file = question_to_file.get(question_only)
+            if src_file:
+                pmids = sourcepath_to_pmids.get(src_file, [])
+                q_obj["documents"] = pmids
+                if pmids:
+                    docs_matched += 1
+                else:
+                    print(
+                        f"Warning: item {i} (qid={qid}) source file {src_file!r} "
+                        "has no chunks in the index.",
+                        file=sys.stderr,
+                    )
+            else:
+                q_obj["documents"] = []
+                print(
+                    f"Warning: item {i} (qid={qid}) body_query not found in --qa-full; "
+                    "documents will be empty.",
+                    file=sys.stderr,
+                )
+
+        questions.append(q_obj)
+
+    if question_to_file:
+        print(
+            f"Ground-truth documents: {docs_matched}/{len(questions)} questions matched.",
+            file=sys.stderr,
         )
 
     return {"questions": questions}
@@ -124,13 +184,32 @@ def parse_args() -> argparse.Namespace:
         required=True,
         help="Path to write BioASQ-style JSON.",
     )
+    parser.add_argument(
+        "--qa-full",
+        type=Path,
+        default=None,
+        help="Path to orange_qa_full.json for ground-truth document mapping.",
+    )
+    parser.add_argument(
+        "--chunks",
+        type=Path,
+        default=None,
+        help="Path to orange_docs_chunks.jsonl for source_path -> pmid mapping.",
+    )
     return parser.parse_args()
 
 
 def main() -> None:
     args = parse_args()
 
-    bioasq_obj = convert_mcq_to_bioasq(args.input)
+    if bool(args.qa_full) != bool(args.chunks):
+        print(
+            "Error: --qa-full and --chunks must be provided together.",
+            file=sys.stderr,
+        )
+        sys.exit(1)
+
+    bioasq_obj = convert_mcq_to_bioasq(args.input, args.qa_full, args.chunks)
     args.output.parent.mkdir(parents=True, exist_ok=True)
     with args.output.open("w", encoding="utf-8") as f:
         json.dump(bioasq_obj, f, ensure_ascii=False, indent=2)

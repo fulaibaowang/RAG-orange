@@ -1,0 +1,2 @@
+k_rrf,w_bm25,w_dense,MeanR@400,MeanR@10,MeanR@50,MeanR@100,MeanR@200,MeanR@300,ShortfallRate@400,MeanKeff@400
+60,1.0,1.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,400.0

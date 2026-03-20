@@ -34,6 +34,7 @@ ALLOWLIST_PATTERNS: List[str] = [
     "orange3-timeseries/doc/widgets/*.md",
     "orange3/Orange/distance/distances.md",
     "orange3/doc/data-mining-library/source/tutorial/*.rst",
+    "orange3-addons/*.txt",
 ]
 
 
@@ -125,8 +126,20 @@ def slugify_path(path: str) -> str:
     elif lower.startswith("orange3/"):
         prefix = "core"
 
-    name = Path(path).stem
-    slug = re.sub(r"[^a-z0-9]+", "-", name.lower()).strip("-")
+    p = Path(path)
+    parent = p.parent.name
+    name = p.stem
+    # Include parent directory only for generic stems (e.g. "index") that
+    # would otherwise collide across different directories.
+    if name.lower() == "index" and parent:
+        parts = f"{parent}-{name}"
+    else:
+        parts = name
+    slug = re.sub(r"[^a-z0-9]+", "-", parts.lower()).strip("-")
+    # BM25 Terrier index limits docno to 32 chars; reserve 3 for "-NN" suffix.
+    max_slug = 32 - len(prefix) - 1 - 3
+    if len(slug) > max_slug:
+        slug = slug[:max_slug].rstrip("-")
     return f"{prefix}-{slug}" if slug else prefix
 
 

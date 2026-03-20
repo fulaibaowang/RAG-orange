@@ -229,6 +229,92 @@ with open(os.path.join(PROJECT_ROOT, 'data', 'orange_docs_chunks.jsonl')) as f:
 print(f"Loaded {len(chunks_by_id)} document chunks")
 print(f"BM25 runs: {len(bm25_runs)} rows, Dense: {len(dense_runs)}, Hybrid: {len(hybrid_runs)}")
 
+# %% [markdown]
+# ### 2.1.1 Retrieval quality: MRR curve
+#
+# The bioasq test file includes a `documents` field listing the ground-truth
+# chunk pmids for each question (derived from the source file in
+# `orange_qa_full.json`). We compute MRR@k across all five retrieval stages
+# to see how retrieval quality improves through the pipeline.
+#
+# **MRR@k** = mean reciprocal rank of the first relevant chunk in the top-k.
+# This metric is unaffected by the number of ground-truth chunks per question,
+# making it suitable when ground truth is at the file level.
+
+# %%
+import matplotlib.pyplot as plt
+
+bioasq_path = os.path.join(
+    PROJECT_ROOT, 'data', 'train_test_dataset_bioasq_style',
+    'orange_qa_MCQ_test_bioasq.json',
+)
+with open(bioasq_path) as f:
+    bioasq_data = json.load(f)
+
+gold_map = {}
+for q in bioasq_data['questions']:
+    docs = q.get('documents', [])
+    if docs:
+        gold_map[q['id']] = set(docs)
+
+print(f"Ground-truth loaded: {len(gold_map)} questions with documents")
+
+run_files = {
+    'BM25': os.path.join(OUTPUT_DIR, 'bm25/runs/BM25__orange_qa_MCQ_test_bioasq__top80.tsv'),
+    'Dense': os.path.join(OUTPUT_DIR, 'dense/runs/dense_orange_qa_MCQ_test_bioasq.tsv'),
+    'Hybrid': os.path.join(OUTPUT_DIR, 'hybrid/runs/best_rrf_orange_qa_MCQ_test_bioasq_top80.tsv'),
+    'Rerank': os.path.join(OUTPUT_DIR, 'rerank/runs/best_rrf_orange_qa_MCQ_test_bioasq_top80.tsv'),
+    'Rerank+Hybrid': os.path.join(OUTPUT_DIR, 'rerank_hybrid/runs/best_rrf_orange_qa_MCQ_test_bioasq_top80_rrf_poolR50_poolH50_k60.tsv'),
+}
+
+run_dfs = {}
+for name, path in run_files.items():
+    df = pd.read_csv(path, sep='\t', header=0)
+    df['rank'] = df['rank'].astype(int)
+    run_dfs[name] = df
+    print(f"  {name}: {len(df)} rows, columns={list(df.columns)}")
+
+
+def compute_mrr(runs_df, gold_map, k):
+    scores = []
+    for qid, gold in gold_map.items():
+        ranked = runs_df[runs_df['qid'] == qid].sort_values('rank')['docno'].tolist()[:k]
+        rr = 0.0
+        for i, doc in enumerate(ranked):
+            if doc in gold:
+                rr = 1.0 / (i + 1)
+                break
+        scores.append(rr)
+    return np.mean(scores)
+
+
+ks = [1, 3, 5, 10, 20]
+mrr_results = {
+    name: [compute_mrr(df, gold_map, k) for k in ks]
+    for name, df in run_dfs.items()
+}
+
+# %%
+fig, ax = plt.subplots(figsize=(8, 5))
+for name, values in mrr_results.items():
+    ax.plot(ks, values, marker='o', label=name)
+ax.set_xlabel('k')
+ax.set_ylabel('MRR@k')
+ax.set_title('MRR@k by Retrieval Stage (MCQ)')
+ax.set_xticks(ks)
+ax.legend()
+ax.grid(True, alpha=0.3)
+ax.set_ylim(0, 1.05)
+plt.tight_layout()
+plt.show()
+
+# %%
+print(f"{'Method':<20} " + " ".join(f"{'MRR@'+str(k):>7}" for k in ks))
+print("-" * (20 + 8 * len(ks)))
+for name in run_dfs:
+    mrr_vals = " ".join(f"{v:7.3f}" for v in mrr_results[name])
+    print(f"{name:<20} {mrr_vals}")
+
 # %%
 def get_top_hits(runs_df, qid, n=5):
     """Return top-n hits for a given question ID."""

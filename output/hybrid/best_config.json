@@ -1,0 +1,13 @@
+{
+  "k_rrf": 60.0,
+  "w_bm25": 1.0,
+  "w_dense": 1.0,
+  "MeanR@400": 0.0,
+  "MeanR@10": 0.0,
+  "MeanR@50": 0.0,
+  "MeanR@100": 0.0,
+  "MeanR@200": 0.0,
+  "MeanR@300": 0.0,
+  "ShortfallRate@400": 0.0,
+  "MeanKeff@400": 400.0
+}

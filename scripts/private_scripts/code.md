@@ -19,7 +19,19 @@ python scripts/shared_scripts/index/build_dense_hnsw_index_from_jsonl_shards.py 
   --out_dir "index/bg3_m3" \
   --model_name "BAAI/bge-m3" \
   --device "mps" \
-  --batch_size 8 \
+  --batch_size 6 \
   --dedup_pmids 
 
 time scripts/shared_scripts/run_retrieval_rerank_pipeline.sh --config scripts/private_scripts/config.env
+
+python scripts/build_rag_eval_dataset.py \
+  --contexts-json output/generation_baseline/orange_qa_MCQ_test_bioasq_answers.json \
+  --original-mcq data/train_test_dataset/orange_qa_MCQ_test.jsonl \
+  --output output/generation_baseline_converted/orange_qa_MCQ_test_bioasq_answers.json \
+  --top-k 2
+
+python scripts/build_rag_eval_dataset.py \
+  --contexts-json output/generation_baseline/orange_qa_MCQ-con_test_bioasq_answers.json \
+  --original-mcq data/train_test_dataset/orange_qa_MCQ-con_test.jsonl \
+  --output output/generation_baseline_converted/orange_qa_MCQ-con_test_bioasq_answers.json \
+  --top-k 2
