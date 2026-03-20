@@ -1,0 +1,5 @@
+dir_label,run,label,role,MAP@10,MRR@10,GMAP@10,Success@10,MeanR@50,MeanR@100,MeanR@200
+Hybrid+Rerank,best_rrf_orange_qa_MCQ-con_test_bioasq_top400_rrf_poolR50_poolH50_k60,best_rrf_orange_qa_MCQ-con_test_bioasq_top400_rrf_poolR50_poolH50_k60,test,,,,,,,
+Hybrid+Rerank,best_rrf_orange_qa_MCQ_test_bioasq_top400_rrf_poolR50_poolH50_k60,best_rrf_orange_qa_MCQ_test_bioasq_top400_rrf_poolR50_poolH50_k60,train,0.8443522911942555,0.9741666666666666,0.7652273536678061,0.995,0.980911976911977,0.9861363636363636,0.9861363636363636
+Rerank,best_rrf_orange_qa_MCQ-con_test_bioasq_top400,best_rrf_orange_qa_MCQ-con_test_bioasq_top400,test,,,,,,,
+Rerank,best_rrf_orange_qa_MCQ_test_bioasq_top400,best_rrf_orange_qa_MCQ_test_bioasq_top400,train,0.8243159580498866,0.9683333333333334,0.7425046018003795,0.995,0.980911976911977,0.9878030303030303,0.9878030303030303

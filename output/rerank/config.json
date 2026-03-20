@@ -1,0 +1,34 @@
+{
+  "model": "BAAI/bge-reranker-v2-m3",
+  "reranker_type": "cross_encoder",
+  "model_device": "cuda",
+  "model_batch": 64,
+  "model_max_length": 512,
+  "llm_use_fp16": true,
+  "llm_use_bf16": false,
+  "use_multi_gpu": false,
+  "num_gpus": 0,
+  "candidate_limit": 80,
+  "max_queries": null,
+  "runs_dir": "/work/output/hybrid/runs",
+  "run_files": [
+    "/work/output/hybrid/runs/best_rrf_orange_qa_MCQ-con_test_bioasq_top400.tsv",
+    "/work/output/hybrid/runs/best_rrf_orange_qa_MCQ_test_bioasq_top400.tsv"
+  ],
+  "docs_jsonl": "/work/data/orange_docs_chunks.jsonl",
+  "train_json": "/work/data/train_test_dataset_bioasq_style/orange_qa_MCQ_test_bioasq.json",
+  "test_batch_jsons": [
+    "/work/data/train_test_dataset_bioasq_style/orange_qa_MCQ-con_test_bioasq.json"
+  ],
+  "ks_recall": [
+    50
+  ],
+  "split_to_role": {
+    "orange_qa_MCQ_test_bioasq": "train",
+    "orange_qa_MCQ-con_test_bioasq": "test"
+  },
+  "split_to_label": {
+    "orange_qa_MCQ_test_bioasq": "orange_qa_MCQ_test_bioasq",
+    "orange_qa_MCQ-con_test_bioasq": "orange_qa_MCQ-con_test_bioasq"
+  }
+}
