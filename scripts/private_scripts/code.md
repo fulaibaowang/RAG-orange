@@ -28,10 +28,10 @@ python scripts/build_rag_eval_dataset.py \
   --contexts-json output/generation_baseline/orange_qa_MCQ_test_bioasq_answers.json \
   --original-mcq data/train_test_dataset/orange_qa_MCQ_test.jsonl \
   --output output/generation_baseline_converted/orange_qa_MCQ_test_bioasq_answers.json \
-  --top-k 2
+  --top-k 1
 
 python scripts/build_rag_eval_dataset.py \
   --contexts-json output/generation_baseline/orange_qa_MCQ-con_test_bioasq_answers.json \
   --original-mcq data/train_test_dataset/orange_qa_MCQ-con_test.jsonl \
   --output output/generation_baseline_converted/orange_qa_MCQ-con_test_bioasq_answers.json \
-  --top-k 2
+  --top-k 1
