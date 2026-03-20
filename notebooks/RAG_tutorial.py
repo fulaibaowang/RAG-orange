@@ -7,84 +7,76 @@
 #       format_version: '1.3'
 #       jupytext_version: 1.19.1
 #   kernelspec:
-#     display_name: orange RAG (Python 3.14 venv)
+#     display_name: Python 3 (ipykernel)
 #     language: python
-#     name: ornagerag-py314
+#     name: python3
 # ---
 
 # %% [markdown]
-# # RAG Retrieval and Evaluation Tutorial on Orange3 QA & MCQ dataset
+# # RAG Retrieval and Evaluation Tutorial on the Orange3 QA & MCQ Dataset
+#
+# This tutorial walks through two main topics:
+#
+# 1. **Baseline evaluation** -- measure how Qwen3-0.6B performs on Orange3
+#    multiple-choice questions *without* any retrieval or fine-tuning.
+# 2. **RAG evaluation** -- explore retrieval results produced by the
+#    `run_retrieval_rerank_pipeline.sh` pipeline, then evaluate answer quality
+#    with and without fine-tuning.
 
 # %% [markdown]
 # ### Preparing the environment
+#
+# This notebook works both **locally** (inside the cloned repo) and on
+# **Google Colab**. The cell below detects the runtime, sets up paths, and
+# -- on Colab -- clones the repo and installs dependencies automatically.
 
 # %%
-# @title 🛠️ Setup: Optional Clone & Install (commented out)
 import os
 import sys
 
-# Optional: clone original tutorial repo (kept here for reference, commented out)
-REPO_URL = "https://github.com/fulaibaowang/RAG-orange.git"
-REPO_NAME = "RAG-orange"
-branch = "main"
-
-# if os.path.isdir(REPO_NAME):
-#     print(f"🔄 Updating {REPO_NAME}...")
-#     # !cd {REPO_NAME} && git pull origin {branch}
-# else:
-#     print(f"📥 Cloning {REPO_NAME}...")
-#     # !git clone {REPO_URL}
-
-# if REPO_NAME not in sys.path:
-#     sys.path.append(os.path.abspath(REPO_NAME))
-
-# Optional: install dependencies from the cloned repo (commented out)
-# print("📦 Installing dependencies from cloned repo...")
-# #!pip install -q -r {REPO_NAME}/requirements.txt
-print("Using local project files. External clone/install is kept above but commented out.")
-
-# %% [markdown]
-# #### Running in Google Colab?
-#
-# If you open this notebook directly in Google Colab (via the GitHub link), run
-# the next cell once to clone the repository and install dependencies. When
-# working locally inside the cloned repo, you can skip it.
-
-# %%
+IN_COLAB = False
 try:
     import google.colab  # type: ignore
     IN_COLAB = True
 except ImportError:
-    IN_COLAB = False
+    pass
+
+REPO_URL = "https://github.com/fulaibaowang/RAG-orange.git"
+REPO_NAME = "RAG-orange"
+BRANCH = "main"
 
 if IN_COLAB:
-    REPO_URL = "https://github.com/fulaibaowang/RAG-orange.git"
-    REPO_NAME = "RAG-orange"
-    branch = "main"
-
     if not os.path.isdir(REPO_NAME):
-        print(f"📥 Cloning {REPO_NAME} from GitHub...")
-        get_ipython().system(f"git clone -b {branch} {REPO_URL}")
-    else:
-        print(f"🔄 {REPO_NAME} already present, skipping clone.")
-
-    # Change working directory to the repo root (so relative paths match).
+        print(f"Cloning {REPO_NAME} from GitHub...")
+        get_ipython().system(f"git clone -b {BRANCH} {REPO_URL}")
     os.chdir(REPO_NAME)
-    print(f"Working directory set to: {os.getcwd()}")
 
-    # Optionally install Python dependencies if needed.
     req_path = os.path.join(os.getcwd(), "requirements.txt")
     if os.path.isfile(req_path):
-        print("📦 Installing Python dependencies from requirements.txt (this may take a while)...")
+        print("Installing dependencies from requirements.txt...")
         get_ipython().system("pip install -q -r requirements.txt")
-    else:
-        print("No requirements.txt found, assuming dependencies are already installed.")
+
+if "__file__" in globals():
+    PROJECT_ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
 else:
-    print("Not running in Google Colab; using existing local environment.")
+    _cwd = os.path.abspath(os.getcwd())
+    # Walk up from cwd to find the repo root (contains .git)
+    _candidate = _cwd
+    while _candidate != os.path.dirname(_candidate):
+        if os.path.isdir(os.path.join(_candidate, ".git")):
+            break
+        _candidate = os.path.dirname(_candidate)
+    PROJECT_ROOT = _candidate
+
+for _subdir in ("src", "scripts"):
+    _p = os.path.join(PROJECT_ROOT, _subdir)
+    if _p not in sys.path:
+        sys.path.insert(0, _p)
+
+print(f"Environment: {'Google Colab' if IN_COLAB else 'local'}")
+print(f"Project root: {PROJECT_ROOT}")
 
 # %%
-import os
-import sys
 import json
 import textwrap
 
@@ -94,24 +86,15 @@ import pandas as pd
 from pathlib import Path
 from transformers import AutoTokenizer, AutoModelForCausalLM
 
-sys.path.append('../src')
-if "__file__" in globals():
-    PROJECT_ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
-else:
-    # In Colab, after `os.chdir('RAG-orange')`, cwd *is* the project root
-    PROJECT_ROOT = os.path.abspath(os.getcwd())
-
-SRC_DIR = os.path.join(PROJECT_ROOT, "src")
-if SRC_DIR not in sys.path:
-    sys.path.append(SRC_DIR)
-
-from evaluation_function import evaluate_model
 from evaluation_function import evaluate_model
 
 # %% [markdown]
-# ## PART 1: Baseline evaluation with Qwen3-0.6B
+# ## PART 1: Baseline Evaluation with Qwen3-0.6B
 #
-# ### Defining the model config
+# Before adding any retrieval context, we establish a baseline by running
+# Qwen3-0.6B on the Orange3 MCQ test sets without any external knowledge.
+#
+# ### 1.1 Model configuration
 
 # %%
 MODEL_CONFIG = {
@@ -124,16 +107,9 @@ for key, value in MODEL_CONFIG.items():
     print(f"   {key}: {value}")
 
 # %% [markdown]
-# ## Test dataset and paths
+# ### 1.2 Test datasets and paths
 
 # %%
-if "__file__" in globals():
-    # Running as a script from inside notebooks/ → go one level up
-    PROJECT_ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
-else:
-    # Running in an environment like Colab where we already `cd` into the repo root
-    PROJECT_ROOT = os.path.abspath(os.getcwd())
-
 DATA_DIR = os.path.join(PROJECT_ROOT, 'data', 'train_test_dataset')
 TESTDATA_MCQ_FILE = os.path.join(DATA_DIR, 'orange_qa_MCQ_test.jsonl')
 TESTDATA_MCQ_CON_FILE = os.path.join(DATA_DIR, 'orange_qa_MCQ-con_test.jsonl')
@@ -148,9 +124,7 @@ print(f"MCQ test set: {len(test_mcq_dataset)} questions")
 print(f"MCQ-con test set: {len(test_mcq_con_dataset)} questions")
 
 # %% [markdown]
-# ### Load the model and tokenizer
-#
-# Let's get familiar with the model and tokenizer. Specifically look at what layers the model has.
+# ### 1.3 Load the model and tokenizer
 
 # %%
 print("Loading model and tokenizer...")
@@ -176,36 +150,52 @@ baseline_results = {
 print("Baseline Evaluation Results:", baseline_results)
 
 # %% [markdown]
-# This is the baseline results by Qwen/Qwen3-0.6B before fine tuning:
+# ### 1.4 Baseline results
 #
-#     Evaluation Results: {'accuracy_mcq': 5.0, 'se_mcq': 1.54, 'accuracy_mcq_con': 13.5, 'se_mcq_con': 2.42}
+# Qwen3-0.6B baseline **before** RAG or fine-tuning:
 #
-# Fine tuning and token injection results (for reference, not re-run here):
+#     {'accuracy_mcq': 5.0, 'se_mcq': 1.54, 'accuracy_mcq_con': 13.5, 'se_mcq_con': 2.42}
 #
-# - after fine tuning:
-#   {'accuracy_mcq': 64.0, 'se_mcq': 3.39, 'accuracy_mcq_con': 13.5, 'se_mcq_con': 2.42}
-#   
-# - after token injection and fine tuning:
-#   {'accuracy_mcq': 60.0, 'se_mcq': 3.46, 'accuracy_mcq_con': 17.0, 'se_mcq_con': 2.66}
+# For reference, the
+# [LoRA fine-tuning tutorial](https://github.com/MartinSpendl/LoRA-finetuning-tutorial/blob/main/notebooks/0.0-lora-tutorial.ipynb)
+# reports the following results (not re-run here):
+#
+# | Setting | MCQ | MCQ-con |
+# |---|---|---|
+# | After LoRA fine-tuning | 64.0 % | 13.5 % |
+# | After token injection + fine-tuning | 60.0 % | 17.0 % |
 
 # %% [markdown]
-# ## PART 2: RAG
+# ## PART 2: Retrieval-Augmented Generation (RAG)
 #
-# In this section we explore how Retrieval-Augmented Generation (RAG) affects
-# the model's ability to answer Orange3 MCQ questions.
+# In this part we examine how providing retrieved documentation context affects
+# the model's ability to answer Orange3 MCQ questions. **We do not run the
+# retrieval pipeline itself in this notebook.** The full retrieval, reranking,
+# evidence extraction, and answer generation pipeline was executed beforehand
+# via `scripts/shared_scripts/run_retrieval_rerank_pipeline.sh`, which
+# orchestrates the following stages:
 #
-# 1. We first visually inspect how different retrieval methods (BM25, dense,
-#    hybrid, rerank) produce different top results for the same question.
-# 2. We then evaluate pre-generated RAG answers (produced by llama3.3).
-# 3. Finally, we run Qwen3-0.6B with injected RAG context for a fair comparison.
+# 1. **BM25** -- sparse keyword retrieval (with optional RM3 query expansion).
+# 2. **Dense** -- embedding-based retrieval using a bi-encoder model.
+# 3. **Hybrid** -- Reciprocal Rank Fusion (RRF) of BM25 and Dense results.
+# 4. **Rerank** -- a cross-encoder re-scores the hybrid candidates.
+# 5. **Hybrid + Rerank RRF** -- a second RRF fusion combining rerank scores
+#    with the original hybrid scores for the final ranked list.
+#
+# The pipeline writes TREC-style run files and context JSONs to `output/`.
+# In the cells below we:
+#
+# - visually compare how different retrieval stages rank documents for the
+#   same question,
+# - score pre-generated answers produced by llama3.3 (a much larger model),
+# - evaluate Qwen3-0.6B with injected RAG context for a fair comparison, and
+# - optionally fine-tune Qwen3-0.6B with LoRA/DoRA and re-evaluate.
 
 # %% [markdown]
 # ### 2.1 Loading retrieval results and document chunks
 #
-# The retrieval pipeline (run separately via `run_retrieval_rerank_pipeline.sh`)
-# produced run files for each stage: BM25, dense, hybrid (RRF fusion of BM25 +
-# dense), rerank (cross-encoder on hybrid candidates), and rerank_hybrid (RRF
-# of rerank + hybrid).
+# We load the run files produced by each pipeline stage together with the
+# chunked Orange3 documentation (one chunk per JSONL line).
 
 # %%
 def load_run_tsv(path, columns=None):
@@ -278,13 +268,11 @@ def show_retrieval_comparison(qid, question_text, runs_dict, top_n=3):
         print(f"\n  Top-1 for {first_method}:")
         show_chunk_text(docno)
 
-# Helper to get the full MCQ prompt (question + multiple-choice options)
 def get_mcq_prompt_with_choices(qid, dataset):
-    """
-    Return the full user message (question + options) for a given MCQ id.
+    """Return the full user message (question + options) for a given qid.
 
-    The qid follows the pattern '<stem>_<index>', where <stem> matches the
-    TESTDATA_MCQ_FILE stem, and index is the 0-based position in the dataset.
+    The qid follows the pattern ``<stem>_<index>`` where *index* is the
+    0-based position in the dataset list.
     """
     try:
         stem, idx_str = qid.rsplit("_", 1)
@@ -296,12 +284,12 @@ def get_mcq_prompt_with_choices(qid, dataset):
 # %% [markdown]
 # ### 2.2 Example 1: BM25 vs Dense vs Hybrid
 #
-# Question: *"What is the source of the data in GEO Data Sets?"*
+# *"What is the source of the data in GEO Data Sets?"*
 #
-# Here BM25 top-1 is `vp-sqltable-3` (about SQL/PostgreSQL -- wrong domain),
-# while dense retrieval correctly finds `bio-geo-data-sets-1`.
-# Hybrid (RRF fusion) also ranks `bio-geo-data-sets-1` first, showing that the
-# dense signal rescues the result despite BM25's keyword mismatch.
+# BM25 ranks `vp-sqltable-3` (about SQL/PostgreSQL) first -- a keyword match
+# on the wrong domain. Dense retrieval correctly surfaces `bio-geo-data-sets-1`.
+# Hybrid (RRF) also ranks the correct chunk first, showing how the dense signal
+# can rescue the result despite BM25's keyword mismatch.
 
 # %%
 qid_ex1 = "orange_qa_MCQ_test_19"
@@ -318,17 +306,17 @@ show_retrieval_comparison(
 )
 
 # %% [markdown]
-# ### 2.3 Example 2: Rerank corrects hybrid retrieval
+# ### 2.3 Example 2: Reranking corrects hybrid retrieval
 #
-# Question: *"Which calibration method uses Isotonic Regression?"*
+# *"Which calibration method uses Isotonic Regression?"*
 #
-# BM25 top-1 is `vp-calibratedlearner` (the correct doc about calibration
-# methods), while dense top-1 is `vp-calibrationplot-2` (the plot widget, not
-# the learner). Hybrid follows dense and ranks `vp-calibrationplot-2` first.
+# BM25 correctly finds `vp-calibratedlearner`, but dense retrieval ranks
+# `vp-calibrationplot-2` (the plot widget, not the learner) higher. Because
+# hybrid fuses both lists, the wrong chunk ends up at rank 1.
 #
 # The cross-encoder reranker re-scores the hybrid candidates and promotes
-# `vp-calibratedlearner` back to rank 1 -- demonstrating how reranking can fix
-# errors introduced by the initial retrieval fusion.
+# `vp-calibratedlearner` back to rank 1, demonstrating how reranking can
+# correct errors introduced by the initial retrieval fusion.
 
 # %%
 qid_ex2 = "orange_qa_MCQ_test_152"
@@ -347,14 +335,16 @@ show_retrieval_comparison(
 )
 
 # %% [markdown]
-# ### 2.4 Evaluate llama3.3 RAG answers
+# ### 2.4 Scoring pre-generated llama3.3 RAG answers
 #
-# The RAG pipeline generated answers using llama3.3 via Ollama. The results
-# were converted into the same chat-message format as our MCQ test set.
-# We score them by comparing the assistant's answer letter to the ground truth.
+# The retrieval pipeline also generated answers using **llama3.3** (via Ollama)
+# with the retrieved contexts. Those answers were converted into the same
+# chat-message format as our MCQ test set. We score them here by comparing
+# the predicted answer letter to the ground truth.
 #
-# **Note:** This comparison is not apples-to-apples with the Qwen3-0.6B baseline
-# since llama3.3 is a much larger model. Section 2.5 addresses this.
+# **Note:** This is *not* an apples-to-apples comparison with the Qwen3-0.6B
+# baseline because llama3.3 is a much larger model. Section 2.5 provides a
+# fairer comparison by running the same small model with RAG context.
 
 # %%
 def score_pregenerated_answers(pred_path, gold_dataset):
@@ -381,21 +371,20 @@ print(f"llama3.3 + RAG context (MCQ):     {acc_llama_mcq:.1f}% ({correct_mcq}/{t
 print(f"llama3.3 + RAG context (MCQ-con): {acc_llama_mcq_con:.1f}% ({correct_mcq_con}/{total_mcq_con})")
 
 # %% [markdown]
-# ### 2.5 Evaluate Qwen3-0.6B with RAG context
+# ### 2.5 Evaluating Qwen3-0.6B with RAG context
 #
-# For a fair comparison we inject the same retrieved contexts into the MCQ test
-# questions and run `evaluate_model` with Qwen3-0.6B. This uses the
-# `build_rag_eval_dataset` script which prepends a `Context:` block to each
-# user message.
+# For a fair comparison with the baseline, we inject the same retrieved contexts
+# into the MCQ user prompts and let Qwen3-0.6B answer. The helper
+# `build_rag_eval_dataset` prepends a `Context:` block (built from the top-k
+# retrieved chunks) to each user message.
 
 # %%
-sys.path.append(os.path.join(PROJECT_ROOT, 'scripts'))
 from build_rag_eval_dataset import build_rag_eval_dataset
 
 evidence_mcq_path = Path(OUTPUT_DIR) / 'evidence_baseline' / 'orange_qa_MCQ_test_bioasq_contexts.json'
 evidence_mcq_con_path = Path(OUTPUT_DIR) / 'evidence_baseline' / 'orange_qa_MCQ-con_test_bioasq_contexts.json'
 
-# Build RAG datasets for top_k=1 and top_k=3 (both used for base model evaluation; debug & fine-tuning use top_k=3).
+# Build RAG-augmented datasets for top_k=1 and top_k=3.
 rag_mcq_dataset_k1 = build_rag_eval_dataset(
     contexts_path=evidence_mcq_path,
     original_mcq_path=Path(TESTDATA_MCQ_FILE),
@@ -427,12 +416,10 @@ print(f"RAG-augmented MCQ (top_k=3): {len(rag_mcq_dataset)} questions")
 print(f"RAG-augmented MCQ-con (top_k=3): {len(rag_mcq_con_dataset)} questions")
 
 # %% [markdown]
-# The original MCQ prompts say *"based on your knowledge"* and the system
-# message has no instruction to use the provided context. The RAG pipeline
-# (llama3.3) uses `scripts/prompts/system.txt` which explicitly says
-# *"You MUST answer using ONLY the provided Evidence Contexts."*
-#
-# We patch the messages so Qwen3-0.6B gets the same kind of instruction.
+# The original MCQ prompts tell the model to answer *"based on your knowledge"*.
+# The RAG pipeline instead instructs the model to answer using *only* the
+# provided context. We patch the system and user messages so Qwen3-0.6B
+# receives the same kind of instruction.
 
 # %%
 RAG_SYSTEM_PROMPT = (
@@ -470,20 +457,15 @@ print("\nSample: RAG-augmented user message (first 5000 chars):")
 print(rag_mcq_dataset[0]['messages'][1]['content'][:5000])
 
 # %% [markdown]
-# #### 2.5.1 Inspect raw Qwen3-0.6B generations (debug)
+# #### 2.5.1 Inspecting raw Qwen3-0.6B generations (debug)
 #
-# Before trusting the accuracy numbers, it is useful to look at a few raw
-# generations from Qwen3-0.6B to see:
-# - whether the model outputs just a letter (A/B/C/...), or a longer sentence,
-# - whether it follows the `/no_think` instruction and whether any `<think>` tags
-#   appear in the output,
-# - how often the extracted answer (after stripping any thinking) matches the
-#   gold letter.
+# Before trusting the accuracy numbers it is useful to eyeball a few raw
+# generations. The helper below prints, for a small sample:
 #
-# The helper below prints a small sample of MCQ items together with:
 # - the (truncated) user prompt,
 # - the gold answer letter,
-# - the raw decoded model output,
+# - the raw decoded output (does the model emit just a letter, or a full
+#   sentence? do any `<think>` tags leak through despite `/no_think`?),
 # - the extracted prediction that `evaluate_model` compares against the gold.
 
 # %%
@@ -540,8 +522,7 @@ def debug_qwen_outputs(sample_dataset, num_examples=5):
             print()
 
 # %%
-# Inspect raw Qwen3-0.6B generations (uses RAG dataset with top_k=3).
-# You can also try rag_mcq_dataset_k1 or test_mcq_dataset.
+# Uncomment to inspect raw generations (try rag_mcq_dataset_k1 or test_mcq_dataset too):
 # debug_qwen_outputs(rag_mcq_dataset, num_examples=5)
 
 # %%
@@ -558,18 +539,20 @@ print(f"  MCQ: {accuracy_mcq_rag:.1f}%, MCQ-con: {accuracy_mcq_con_rag:.1f}%")
 # %% [markdown]
 # ### 2.6 Fine-tuned Qwen3-0.6B + RAG (optional)
 #
-# So far we compared:
-# - base Qwen3-0.6B (no context),
-# - base Qwen3-0.6B + RAG context,
-# - llama3.3 + RAG context.
+# So far we have compared:
 #
-# To see whether domain-specific fine-tuning helps *in addition* to RAG, we can
-# re-use the LoRA/DoRA configuration from the finetuning tutorial and train a
-# lightweight adapter on the Orange QA training set, then evaluate with the
-# same RAG-augmented MCQ datasets.
+# - base Qwen3-0.6B without context,
+# - base Qwen3-0.6B with RAG context, and
+# - llama3.3 with RAG context.
 #
-# This step can be GPU-intensive and is therefore optional; run it only if you
-# have enough resources.
+# To see whether domain-specific fine-tuning helps *in addition to* RAG, we
+# train a lightweight LoRA/DoRA adapter on the Orange QA training set and
+# re-evaluate on the same RAG-augmented MCQ datasets. The adapter configuration
+# follows the
+# [LoRA fine-tuning tutorial](https://github.com/MartinSpendl/LoRA-finetuning-tutorial).
+#
+# **This step is GPU-intensive and optional.** Skip it if you do not have
+# sufficient resources.
 
 # %%
 from datasets import load_dataset
@@ -634,7 +617,7 @@ training_args = TrainingArguments(
     logging_steps=10,
     optim="adamw_torch",
     save_strategy="epoch",
-    report_to=[],  # disable wandb by default in this notebook
+    report_to=[],
 )
 
 trainer = SFTTrainer(
@@ -660,8 +643,9 @@ print(f"Fine-tuned MCQ-con with RAG: accuracy={accuracy_mcq_con_rag_ft:.1f}%, SE
 # %% [markdown]
 # ### 2.7 Summary
 #
-# Base model (no fine-tuning) is evaluated with RAG using top_k=1 and top_k=3.
-# Fine-tuned + RAG uses top_k=3 only.
+# The table below collects all settings evaluated in this tutorial.
+# The base model is tested with RAG at top_k = 1 and top_k = 3; the
+# fine-tuned variant uses top_k = 3 only.
 
 # %%
 print("=" * 75)
